@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Black Liminal Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400&display=swap">
+<style>
+/* Layout: a live black corridor fills the screen. The English line sits top left, the age of the site sits at the bottom. */
+:root {
+  --bg: #000000;
+  --fg: #f1f0ec;
+  --dim: #a3a2a6;
+  --line: rgba(255, 255, 255, 0.16);
+  --font: 'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+html { font-size: 16px; background: #000; }
+@media (min-width: 1700px) { html { font-size: 20px; } }
+@media (min-width: 2400px) { html { font-size: 28px; } }
+@media (min-width: 3400px) { html { font-size: 40px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); line-height: 1.5; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+#bg { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: #000; z-index: 0; }
+.shade { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 50%), linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0) 30%); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: #000; }
+
+.page {
+  position: relative; z-index: 2;
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(0.8rem, 3vh, 2rem);
+  max-width: 96rem; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(1rem, 3.5vh, 2rem);
+  text-shadow: 0 0 14px #000, 0 0 3px #000;
+}
+@media (min-width: 700px) { .page { padding-left: max(40px, env(safe-area-inset-left, 0px)); padding-right: max(40px, env(safe-area-inset-right, 0px)); padding-block: clamp(1rem, 4vh, 2.2rem); } }
+
+.label { font-size: 0.9rem; font-weight: 300; letter-spacing: 0.05em; text-transform: none; color: var(--dim); }
+#tl, #born { font-size: 0.8rem; }
+.lead { margin: 0; max-width: 30rem; font-weight: 300; font-style: normal; font-size: clamp(0.88rem, min(1.25vw, 2.4vh), 1.08rem); line-height: 1.7; color: var(--fg); }
+
+main { display: flex; flex-direction: column; gap: clamp(0.9rem, 3vh, 2rem); }
+
+.age { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line); margin: 0; padding: 0; list-style: none; }
+.unit { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: clamp(0.35rem, 1.2vh, 0.8rem) 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.num { font-weight: 200; font-size: clamp(1.7rem, min(8vw, 5.6vh), 2.8rem); font-variant-numeric: lining-nums tabular-nums; text-shadow: 0 0 22px rgba(255, 255, 255, 0.22), 0 0 3px #000; letter-spacing: -0.02em; line-height: 1; }
+.unit.sec .num { font-weight: 300; }
+.unit.sec .label::before { content: ""; display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--fg); margin-inline-end: 0.7rem; animation: tick 1s steps(1) infinite; }
+@keyframes tick { 50% { opacity: 0.15; } }
+@media (min-width: 560px) { .unit { flex-direction: row-reverse; } .unit .label { flex: 1; } }
+@media (min-width: 1000px) {
+  .age { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .unit { flex-direction: column-reverse; align-items: flex-start; justify-content: flex-end; gap: clamp(0.5rem, 1.6vh, 1rem); padding-block: clamp(0.8rem, 2.6vh, 1.4rem); padding-inline: 1.2rem 1rem; border-inline-end: 1px solid var(--line); }
+  .unit:first-child { padding-inline-start: 0; }
+  .unit:last-child { border-inline-end: 0; }
+  .num { font-size: clamp(2.3rem, min(4.4vw, 8.5vh), 4.8rem); }
+}
+
+.total { display: flex; flex-direction: column; gap: 0.4rem; }
+.total .big { font-weight: 200; font-variant-numeric: lining-nums tabular-nums; text-shadow: 0 0 22px rgba(255, 255, 255, 0.22), 0 0 3px #000; font-size: clamp(1.7rem, min(5.6vw, 7.5vh), 3.4rem); letter-spacing: -0.02em; word-break: break-all; line-height: 1.1; }
+
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+.cta { color: var(--fg); font-size: 0.95rem; font-weight: 300; text-decoration: underline; text-underline-offset: 0.5em; text-decoration-thickness: 1px; transition: color 0.2s; }
+.cta:hover { color: var(--dim); }
+.cta:focus-visible { outline: 3px solid var(--fg); outline-offset: 6px; }
+
+html[data-ls="0"] .label { letter-spacing: 0; }
+
+/* typewriter: every letter is already in place (so nothing jumps), it just appears one by one */
+.ch { opacity: 0; }
+.ch.on { opacity: 1; }
+.cur { display: inline-block; width: 0; height: 1em; position: relative; vertical-align: text-bottom; }
+.cur::after { content: ""; position: absolute; inset-inline-start: 0.1em; top: 0.05em; width: 1px; height: 1.05em; background: var(--fg); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) { .unit.sec .label::before { animation: none; } }
+</style>
+</head>
+<body>
+
+
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="shade" aria-hidden="true"></div>
+
+<div class="page">
+  <header>
+    <p class="lead label" id="lead">This site has this much time. It does not stop and does not go back, like a human's. Time can't be brought back.</p>
+  </header>
+
+  <main>
+    <ul class="age" role="timer" aria-label="Age of the site">
+      <li class="unit"><span class="num" id="y">0</span><span class="label" id="yl">years</span></li>
+      <li class="unit"><span class="num" id="mo">0</span><span class="label" id="mol">months</span></li>
+      <li class="unit"><span class="num" id="w">0</span><span class="label" id="wl">weeks</span></li>
+      <li class="unit"><span class="num" id="d">0</span><span class="label" id="dl">days</span></li>
+      <li class="unit"><span class="num" id="h">00</span><span class="label" id="hl">hours</span></li>
+      <li class="unit"><span class="num" id="mi">00</span><span class="label" id="mil">minutes</span></li>
+      <li class="unit sec"><span class="num" id="s">00</span><span class="label" id="sl">seconds</span></li>
+    </ul>
+
+    <div class="total">
+      <span class="label" id="tl">Total seconds lived</span>
+      <span class="big" id="total">0</span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span class="label" id="born">Born: 25 November 2026, 00:00 (UTC+4)</span>
+    <a class="label cta" id="cta" href="https://dalink.to/blackliminal" target="_blank" rel="noopener">Donation</a>
+  </footer>
+</div>
+
+<script>
+/* ---------- Age counter, translated to the visitor's language ---------- */
+(function () {
+  // Moment the site was born. The same for every visitor, so everyone sees the same age.
+  var BIRTH = Date.parse('2026-11-25T00:00:00+04:00');
+
+  // lead sentence, label for the total, word for "born"
+  var TR = {
+    en: ["This site has this much time. It does not stop and does not go back, like a human's.", 'Total seconds lived', 'Born', 'Donation', 'Time can\'t be brought back.'],
+    ru: ['Столько времени этому сайту. Оно не останавливается и не возвращается, как у человека.', 'Всего прожито секунд', 'Родился', 'Пожертвование', 'Время не вернуть.'],
+    uk: ['Стільки часу цьому сайту. Воно не зупиняється і не повертається, як у людини.', 'Усього прожито секунд', 'Народився', 'Пожертва', 'Час не повернути.'],
+    bg: ['Толкова време има този сайт. То не спира и не се връща, както при човека.', 'Общо изживени секунди', 'Роден', 'Дарение', 'Времето не може да се върне.'],
+    es: ['Esto es todo el tiempo que tiene este sitio. No se detiene y no vuelve atrás, como el de una persona.', 'Segundos vividos en total', 'Nació', 'Donación', 'El tiempo no se recupera.'],
+    pt: ['Este é o tempo que este site tem. Ele não para e não volta atrás, como o de uma pessoa.', 'Total de segundos vividos', 'Nasceu', 'Doação', 'O tempo não volta.'],
+    fr: ["Voici le temps qu'a ce site. Il ne s'arrête pas et ne revient pas en arrière, comme celui d'un humain.", 'Total de secondes vécues', 'Né le', 'Don', 'Le temps ne se rattrape pas.'],
+    de: ['So viel Zeit hat diese Website. Sie bleibt nicht stehen und geht nicht zurück, wie bei einem Menschen.', 'Gelebte Sekunden insgesamt', 'Geboren', 'Spende', 'Zeit kommt nicht zurück.'],
+    it: ['Questo è il tempo che ha questo sito. Non si ferma e non torna indietro, come quello di una persona.', 'Secondi vissuti in totale', 'Nato il', 'Donazione', 'Il tempo non torna indietro.'],
+    nl: ['Zoveel tijd heeft deze site. Die staat niet stil en gaat niet terug, net als bij een mens.', 'Totaal geleefde seconden', 'Geboren', 'Donatie', 'Tijd komt niet terug.'],
+    pl: ['Tyle czasu ma ta strona. Nie zatrzymuje się i nie wraca, jak czas człowieka.', 'Przeżytych sekund łącznie', 'Urodzona', 'Darowizna', 'Czasu nie da się cofnąć.'],
+    cs: ['Tolik času má tato stránka. Nezastavuje se a nevrací se, jako čas člověka.', 'Celkem prožitých sekund', 'Narozena', 'Dar', 'Čas se nedá vrátit.'],
+    sk: ['Toľko času má táto stránka. Nezastavuje sa a nevracia sa, ako čas človeka.', 'Spolu prežitých sekúnd', 'Narodená', 'Dar', 'Čas sa nedá vrátiť.'],
+    hr: ['Ova stranica ima ovoliko vremena. Ne zaustavlja se i ne vraća se, kao ni ljudsko.', 'Ukupno proživljenih sekundi', 'Rođena', 'Donacija', 'Vrijeme se ne može vratiti.'],
+    ro: ['Atât timp are acest site. Nu se oprește și nu se întoarce, ca al unui om.', 'Total secunde trăite', 'Născut', 'Donație', 'Timpul nu se întoarce.'],
+    hu: ['Ennyi ideje van ennek az oldalnak. Nem áll meg és nem fordul vissza, mint az emberé.', 'Összes megélt másodperc', 'Született', 'Adomány', 'Az időt nem lehet visszahozni.'],
+    el: ['Τόσο χρόνο έχει αυτός ο ιστότοπος. Δεν σταματά και δεν γυρίζει πίσω, όπως του ανθρώπου.', 'Συνολικά δευτερόλεπτα ζωής', 'Γεννήθηκε', 'Δωρεά', 'Ο χρόνος δεν γυρίζει πίσω.'],
+    tr: ['Bu sitenin bu kadar zamanı var. Durmaz ve geri dönmez, tıpkı bir insanınki gibi.', 'Toplam yaşanan saniye', 'Doğum', 'Bağış', 'Zaman geri gelmez.'],
+    sv: ['Så mycket tid har den här webbplatsen. Den stannar inte och går inte tillbaka, precis som en människas.', 'Totalt levda sekunder', 'Född', 'Donation', 'Tiden kommer inte tillbaka.'],
+    no: ['Så mye tid har dette nettstedet. Den stopper ikke og går ikke tilbake, som et menneskes.', 'Totalt levde sekunder', 'Født', 'Donasjon', 'Tiden kommer ikke tilbake.'],
+    da: ['Så meget tid har dette websted. Den stopper ikke og går ikke tilbage, ligesom et menneskes.', 'Samlede levede sekunder', 'Født', 'Donation', 'Tiden kommer ikke tilbage.'],
+    fi: ['Näin paljon aikaa tällä sivustolla on. Se ei pysähdy eikä palaa takaisin, kuten ihmisen.', 'Eletyt sekunnit yhteensä', 'Syntynyt', 'Lahjoitus', 'Aikaa ei saa takaisin.'],
+    ar: ['هذا هو الوقت الذي مضى على هذا الموقع. لا يتوقف ولا يعود إلى الوراء، مثل وقت الإنسان.', 'إجمالي الثواني التي عاشها', 'وُلد في', 'تبرّع', 'الوقت لا يعود.'],
+    he: ['זה הזמן של האתר הזה. הוא לא עוצר ולא חוזר אחורה, כמו אצל אדם.', 'סך כל השניות שחלפו', 'נולד', 'תרומה', 'את הזמן אי אפשר להחזיר.'],
+    fa: ['این وب‌سایت این‌قدر زمان دارد. زمان آن نمی‌ایستد و بازنمی‌گردد، مثل زمان انسان.', 'مجموع ثانیه‌های زندگی‌شده', 'تولد', 'کمک مالی', 'زمان بازنمی‌گردد.'],
+    ur: ['اس ویب سائٹ کے پاس اتنا وقت ہے۔ یہ رکتا نہیں اور واپس نہیں آتا، انسان کے وقت کی طرح۔', 'کل جیے گئے سیکنڈ', 'پیدائش', 'عطیہ', 'وقت واپس نہیں آتا۔'],
+    hi: ['इस साइट के पास इतना समय है। यह रुकता नहीं और लौटता नहीं, किसी इंसान के समय की तरह।', 'कुल बीते सेकंड', 'जन्म', 'दान', 'समय लौटकर नहीं आता।'],
+    bn: ['এই সাইটের এতটা সময় হয়েছে। এটি থামে না এবং ফিরেও আসে না, মানুষের সময়ের মতো।', 'মোট অতিবাহিত সেকেন্ড', 'জন্ম', 'দান', 'সময় ফিরে আসে না।'],
+    id: ['Situs ini memiliki waktu sebanyak ini. Waktu tidak berhenti dan tidak kembali, seperti waktu manusia.', 'Total detik yang dijalani', 'Lahir', 'Donasi', 'Waktu tak bisa kembali.'],
+    ms: ['Laman web ini mempunyai masa sebanyak ini. Ia tidak berhenti dan tidak kembali, seperti masa manusia.', 'Jumlah saat yang dilalui', 'Lahir', 'Derma', 'Masa tidak boleh diundur.'],
+    vi: ['Trang web này có chừng này thời gian. Nó không dừng lại và không quay về, như thời gian của con người.', 'Tổng số giây đã sống', 'Sinh ngày', 'Quyên góp', 'Thời gian không thể quay lại.'],
+    th: ['เว็บไซต์นี้มีเวลาเท่านี้ เวลาไม่หยุดและไม่ย้อนกลับ เหมือนของมนุษย์', 'วินาทีที่ผ่านไปทั้งหมด', 'เกิดเมื่อ', 'บริจาค', 'เวลาย้อนกลับไม่ได้'],
+    zh: ['这个网站拥有这么多时间。它不会停下，也不会倒流，就像人的时间一样。', '累计已度过的秒数', '诞生于', '捐赠', '时间无法倒流。'],
+    'zh-Hant': ['這個網站擁有這麼多時間。它不會停下，也不會倒流，就像人的時間一樣。', '累計已度過的秒數', '誕生於', '捐款', '時間無法倒流。'],
+    ja: ['このサイトにはこれだけの時間があります。止まることも、戻ることもありません。人間の時間と同じように。', '経過した秒数の合計', '誕生', '寄付', '時間は戻らない。'],
+    ko: ['이 사이트에는 이만큼의 시간이 흘렀습니다. 멈추지도, 되돌아가지도 않습니다. 사람의 시간처럼.', '지금까지 흐른 총 초', '탄생', '후원', '시간은 되돌릴 수 없다.'],
+    kk: ['Бұл сайттың уақыты осыншама. Ол тоқтамайды және кері қайтпайды, адамдікі сияқты.', 'Барлығы өткен секунд', 'Туған күні', 'Қайырымдылық', 'Уақытты қайтару мүмкін емес.'],
+    uz: ['Bu saytning shuncha vaqti bor. U to‘xtamaydi va ortga qaytmaydi, xuddi inson vaqti kabi.', 'Jami o‘tgan soniyalar', 'Tug‘ilgan', 'Xayriya', 'Vaqtni qaytarib bo‘lmaydi.'],
+    az: ['Bu saytın bu qədər vaxtı var. Dayanmır və geri qayıtmır, insanın vaxtı kimi.', 'Ümumilikdə keçən saniyələr', 'Doğulub', 'İanə', 'Vaxtı geri qaytarmaq olmaz.'],
+    sw: ['Tovuti hii ina muda huu wote. Haukomi wala haurudi nyuma, kama wa binadamu.', 'Jumla ya sekunde zilizoishi', 'Ilizaliwa', 'Mchango', 'Muda hauwezi kurudishwa.'],
+    fil: ['Ganito karaming oras ang site na ito. Hindi ito humihinto at hindi bumabalik, tulad ng sa tao.', 'Kabuuang segundong nabuhay', 'Isinilang', 'Donasyon', 'Hindi na maibabalik ang oras.']
+  };
+  var RTL = { ar: 1, he: 1, fa: 1, ur: 1 };
+
+  // Prints the top line letter by letter, like a typewriter.
+  function typeLead(p, text) {
+    p.setAttribute('aria-label', text.replace(/\n/g, ' '));
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { p.textContent = text.replace(/\n/g, ' '); return; }
+    var chars;
+    try { chars = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; }); }
+    catch (e) { chars = Array.from(text); }
+    p.textContent = '';
+    var spans = chars.map(function (c) { var el = document.createElement('span'); el.className = 'ch'; el.setAttribute('aria-hidden', 'true'); if (c === '\n') el.appendChild(document.createElement('br')); else el.textContent = c; p.appendChild(el); return el; });
+    var cur = document.createElement('span'); cur.className = 'cur'; cur.setAttribute('aria-hidden', 'true');
+    p.insertBefore(cur, spans[0]);
+    var i = 0, erasing = false;
+    // types the line, waits, erases it a bit faster, waits, and starts again, forever
+    function step() {
+      if (!erasing) {
+        if (i >= spans.length) { erasing = true; setTimeout(step, 3500); return; }
+        spans[i].className = 'ch on';
+        p.insertBefore(cur, spans[i].nextSibling);
+        var c = chars[i]; i++;
+        setTimeout(step, 45 + Math.random() * 70 + (/[.,;:!?。、，]/.test(c) ? 260 : 0));
+      } else {
+        if (i <= 0) { erasing = false; p.insertBefore(cur, spans[0]); setTimeout(step, 900); return; }
+        i--;
+        spans[i].className = 'ch';
+        p.insertBefore(cur, spans[i]);
+        setTimeout(step, 22);
+      }
+    }
+    setTimeout(step, 700);
+  }
+  var NOSPACE = { ar: 1, fa: 1, ur: 1, hi: 1, bn: 1, th: 1 };
+
+  function pick() {
+    var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+    for (var i = 0; i < list.length; i++) {
+      var s = String(list[i]).toLowerCase();
+      if (/^zh/.test(s)) return /hant|-tw|-hk|-mo/.test(s) ? 'zh-Hant' : 'zh';
+      var b = s.split('-')[0];
+      if (b === 'nb' || b === 'nn') b = 'no';
+      if (b === 'tl') b = 'fil';
+      if (TR[b]) return b;
+    }
+    return 'en';
+  }
+  var code = pick();
+  var tr = TR[code];
+  var root = document.documentElement;
+  root.lang = code;
+  if (RTL[code]) root.dir = 'rtl';
+  if (NOSPACE[code]) root.setAttribute('data-ls', '0');
+  typeLead(document.getElementById('lead'), tr[0] + '\n' + tr[4]);
+  document.getElementById('tl').textContent = tr[1];
+  document.getElementById('cta').textContent = tr[3];
+  try {
+    var df;
+    try { df = new Intl.DateTimeFormat(code, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Etc/GMT-4', numberingSystem: 'latn' }); }
+    catch (e) { df = new Intl.DateTimeFormat(code, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Etc/GMT-4' }); }
+    document.getElementById('born').textContent = tr[2] + ': ' + df.format(BIRTH) + ' (UTC+4)';
+  } catch (e) {}
+
+  // Unit names (years, months, ... with correct plural forms) come from the browser's own language data.
+  var UNITS = { y: 'year', mo: 'month', w: 'week', d: 'day', h: 'hour', mi: 'minute', s: 'second' };
+  var EN = { y: ['year', 'years'], mo: ['month', 'months'], w: ['week', 'weeks'], d: ['day', 'days'], h: ['hour', 'hours'], mi: ['minute', 'minutes'], s: ['second', 'seconds'] };
+  var fmt = {}, el = {};
+  ['y', 'mo', 'w', 'd', 'h', 'mi', 's'].forEach(function (k) {
+    el[k] = document.getElementById(k); el[k + 'l'] = document.getElementById(k + 'l');
+    try { fmt[k] = new Intl.NumberFormat(code, { style: 'unit', unit: UNITS[k], unitDisplay: 'long' }); } catch (e) {}
+  });
+  function unitName(k, v) {
+    if (fmt[k]) {
+      try {
+        var parts = fmt[k].formatToParts(v), out = [];
+        for (var i = 0; i < parts.length; i++) if (parts[i].type === 'unit') out.push(parts[i].value);
+        var t = out.join(' ').trim();
+        if (t) return t;
+      } catch (e) {}
+    }
+    return EN[k][v === 1 ? 0 : 1];
+  }
+  var nf;
+  try { nf = new Intl.NumberFormat(code, { numberingSystem: 'latn' }); } catch (e) { nf = new Intl.NumberFormat(); }
+  var totalEl = document.getElementById('total');
+  var last = {};
+
+  function addMonths(b, m) {
+    return Date.UTC(b.getUTCFullYear(), b.getUTCMonth() + m, b.getUTCDate(), b.getUTCHours(), b.getUTCMinutes(), b.getUTCSeconds(), b.getUTCMilliseconds());
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function set(k, v, text) {
+    if (last[k] === text) return;
+    last[k] = text;
+    el[k].textContent = text;
+    el[k + 'l'].textContent = unitName(k, v);
+  }
+
+  function render() {
+    var now = Math.max(Date.now(), BIRTH);
+    var b = new Date(BIRTH), n = new Date(now);
+    var months = (n.getUTCFullYear() - b.getUTCFullYear()) * 12 + (n.getUTCMonth() - b.getUTCMonth());
+    var anchor = addMonths(b, months);
+    if (anchor > now) { months--; anchor = addMonths(b, months); }
+    var rem = Math.floor((now - anchor) / 1000);
+    var years = Math.floor(months / 12); months = months % 12;
+    var days = Math.floor(rem / 86400); rem -= days * 86400;
+    var weeks = Math.floor(days / 7); days = days % 7;
+    var hours = Math.floor(rem / 3600); rem -= hours * 3600;
+    var mins = Math.floor(rem / 60); var secs = rem - mins * 60;
+
+    set('y', years, '' + years);
+    set('mo', months, '' + months);
+    set('w', weeks, '' + weeks);
+    set('d', days, '' + days);
+    set('h', hours, pad(hours));
+    set('mi', mins, pad(mins));
+    set('s', secs, pad(secs));
+    var t = nf.format(Math.floor((now - BIRTH) / 1000));
+    if (last.t !== t) { last.t = t; totalEl.textContent = t; }
+  }
+
+  function loop() {
+    render();
+    setTimeout(loop, 1000 - (Date.now() % 1000) + 5);
+  }
+  loop();
+  document.addEventListener('visibilitychange', render);
+})();
+
+/* ---------- Endless black corridor with a flashlight (WebGL) ---------- */
+(function () {
+  var cv = document.getElementById('bg');
+  var gl = null;
+  try { gl = cv.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' }); } catch (e) {}
+  if (!gl) return;
+
+  var FRAG = [
+    '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+    'precision highp float;',
+    '#else',
+    'precision mediump float;',
+    '#endif',
+    'uniform vec2 R; uniform float T;',
+    'float hash(float n){ return fract(sin(n*127.1)*43758.5453); }',
+    'float hash2(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }',
+    'float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);',
+    '  return mix(mix(hash2(i),hash2(i+vec2(1.0,0.0)),f.x), mix(hash2(i+vec2(0.0,1.0)),hash2(i+vec2(1.0,1.0)),f.x), f.y); }',
+    /* corridor centre line: it bends left and right forever */
+    'float cx(float z){ return 2.2*sin(z*0.09) + 1.1*sin(z*0.037+1.3); }',
+    /* side passages and doorways cut into the walls */
+    'float recess(float z, float side){',
+    '  float id=floor(z/7.0); float h=hash(id*2.0+side*13.0); float lz=fract(z/7.0);',
+    '  return step(0.72,h)*smoothstep(0.30,0.34,lz)*(1.0-smoothstep(0.58,0.62,lz))*2.4; }',
+    'float map(vec3 p){',
+    '  float x=p.x-cx(p.z);',
+    '  float wl=1.5+recess(p.z,0.0); float wr=1.5+recess(p.z,1.0);',
+    '  float dx=min(x+wl, wr-x);',
+    '  float dy=min(1.35-p.y, p.y+1.0);',
+    '  return min(dx,dy); }',
+    'vec3 normalAt(vec3 p){ vec2 e=vec2(0.02,-0.02);',
+    '  return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx)); }',
+    'float albedo(vec3 p, vec3 n, out float gloss){',
+    '  gloss=0.0; float a;',
+    '  if(abs(n.y)>0.5){',
+    '    vec2 uv=p.xz; a=0.26+0.14*noise(uv*2.0)+0.07*noise(uv*18.0);',
+    '    vec2 g=abs(fract(uv/0.6)-0.5); float grid=1.0-smoothstep(0.0,0.02,0.5-max(g.x,g.y));',
+    '    a*=1.0-0.65*grid;',
+    '    if(n.y>0.0){ gloss=smoothstep(0.45,0.75,noise(uv*0.7+3.0)); }',
+    '  } else {',
+    '    vec2 uv=vec2(p.z,p.y); a=0.30+0.16*noise(uv*vec2(1.5,3.0))+0.07*noise(uv*22.0);',
+    '    float f=fract(p.z/2.4); float d=min(f,1.0-f)*2.4;',
+    '    a*=1.0-0.7*(1.0-smoothstep(0.0,0.035,d));',
+    '    if(p.y<-0.2) a*=0.55;',
+    '    a*=1.0-0.6*(1.0-smoothstep(0.0,0.03,abs(p.y+0.2)));',
+    '    float side=step(0.0,p.x-cx(p.z)); float id=floor(p.z/7.0);',
+    '    float hd=hash(id*3.0+side*7.0+50.0);',
+    '    if(hd>0.45 && recess(p.z,side)<0.01){',
+    '      float zc=(id+0.5)*7.0; float dz=abs(p.z-zc);',
+    '      float inD=step(dz,0.45)*step(p.y,0.85); float fr=step(dz,0.54)*step(p.y,0.95)*(1.0-inD);',
+    '      a*=1.0-0.45*inD; a*=1.0+0.7*fr; }',
+    '  }',
+    '  return a; }',
+    'void main(){',
+    '  vec2 uv=(gl_FragCoord.xy-0.5*R)/R.y;',
+    '  float z0=T*1.1;',
+    '  vec3 ro=vec3(cx(z0)+0.28*sin(T*0.4), 0.03*sin(T*4.2)+0.015*sin(T*8.1), z0);',
+    '  vec3 fwd=normalize(vec3(cx(z0+4.0)-ro.x+0.25*sin(T*0.33), 0.03*sin(T*0.5), 4.0));',
+    '  vec3 right=normalize(cross(vec3(0.0,1.0,0.0),fwd)); vec3 up=cross(fwd,right);',
+    '  vec3 rd=normalize(fwd+(right*uv.x+up*uv.y)*1.1);',
+    /* flashlight held low and to the right, sweeping slowly */
+    '  vec3 lp=ro+right*0.18-up*0.14;',
+    '  vec3 bd=normalize(fwd+right*(0.26*sin(T*0.31)+0.07*sin(T*1.3))+up*(0.05*sin(T*0.47)-0.03));',
+    '  float fl=0.94+0.06*noise(vec2(T*9.0,1.0)); fl*=1.0-0.65*step(0.985,noise(vec2(T*3.0,7.0)));',
+    '  float t=0.0; float hit=0.0;',
+    '  for(int i=0;i<64;i++){ vec3 p=ro+rd*t; float d=map(p); if(d<0.004){hit=1.0;break;} t+=d*0.8; if(t>40.0)break; }',
+    '  vec3 col=vec3(0.0);',
+    '  if(hit>0.5){',
+    '    vec3 p=ro+rd*t; vec3 n=normalAt(p); float gloss; float al=albedo(p,n,gloss);',
+    '    vec3 l=lp-p; float dist=length(l); vec3 ld=l/dist;',
+    '    float cosA=dot(-ld,bd);',
+    '    float spot=smoothstep(0.84,0.975,cosA); spot=spot*spot*(0.6+0.8*pow(max(cosA,0.0),30.0));',
+    '    float diff=max(dot(n,ld),0.0);',
+    '    float att=exp(-dist*0.09)/(1.0+0.05*dist*dist);',
+    '    float spec=gloss*pow(max(dot(reflect(-ld,n),-rd),0.0),24.0)*1.4;',
+    '    vec3 lc=vec3(1.0,0.95,0.80);',
+    '    col=lc*(al*diff+spec)*spot*att*3.6*fl + vec3(0.004)*al;',
+    '  }',
+    /* faint haze in the beam */
+    '  float beam=pow(max(dot(rd,bd),0.0),70.0); col+=vec3(1.0,0.95,0.8)*beam*0.035*fl;',
+    '  col=1.0-exp(-col*1.5);',
+    '  float vig=1.0-0.5*dot(uv,uv)*1.4; col*=clamp(vig,0.0,1.0);',
+    '  col+=(hash2(gl_FragCoord.xy+fract(T)*61.0)-0.5)*0.03*(0.3+col);',
+    '  gl_FragColor=vec4(max(col,0.0),1.0);',
+    '}'
+  ].join('\n');
+
+  function compile(type, src) {
+    var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  var vs = compile(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position=vec4(a,0.0,1.0); }');
+  var fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) return;
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(prog)); return; }
+  gl.useProgram(prog);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var uR = gl.getUniformLocation(prog, 'R'), uT = gl.getUniformLocation(prog, 'T');
+
+  // Render at a reduced resolution and let the browser scale it up. The budget drops by itself on slow screens (TVs).
+  var budget = 560000, w = 0, h = 0;
+  function resize() {
+    var cw = Math.max(cv.clientWidth, 1), ch = Math.max(cv.clientHeight, 1);
+    var k = Math.min(1, Math.sqrt(budget / (cw * ch)));
+    var nw = Math.max(2, Math.floor(cw * k)), nh = Math.max(2, Math.floor(ch * k));
+    if (nw !== w || nh !== h) { w = nw; h = nh; cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
+  }
+  function draw(T) {
+    gl.uniform2f(uR, w, h); gl.uniform1f(uT, T);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  resize();
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { draw(14); window.addEventListener('resize', function () { resize(); draw(14); }); return; }
+  window.addEventListener('resize', resize);
+
+  var start = null, prev = 0, slow = 0, frames = 0;
+  function frame(ts) {
+    if (start === null) start = ts;
+    var dt = ts - prev; prev = ts;
+    if (frames++ > 10) {
+      if (dt > 38) slow++; else if (slow > 0) slow--;
+      if (slow > 20 && budget > 130000) { budget *= 0.75; slow = 0; resize(); }
+    }
+    draw(8 + (ts - start) / 1000);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
