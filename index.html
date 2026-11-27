@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Black Liminal Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400&display=swap">
+<style>
+/* Layout: a live black corridor fills the screen. The English line sits top left, the age of the site sits at the bottom. */
+:root {
+  --bg: #000000;
+  --fg: #f1f0ec;
+  --dim: #a3a2a6;
+  --line: rgba(255, 255, 255, 0.16);
+  --font: 'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+html { font-size: 16px; background: #000; }
+@media (min-width: 1700px) { html { font-size: 20px; } }
+@media (min-width: 2400px) { html { font-size: 28px; } }
+@media (min-width: 3400px) { html { font-size: 40px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); line-height: 1.5; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+#bg { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: #000; z-index: 0; }
+.shade { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 50%), linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0) 30%); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: #000; }
+
+.page {
+  position: relative; z-index: 2;
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(0.8rem, 3vh, 2rem);
+  max-width: 96rem; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(1rem, 3.5vh, 2rem);
+  text-shadow: 0 0 14px #000, 0 0 3px #000;
+}
+@media (min-width: 700px) { .page { padding-left: max(40px, env(safe-area-inset-left, 0px)); padding-right: max(40px, env(safe-area-inset-right, 0px)); padding-block: clamp(1rem, 4vh, 2.2rem); } }
+
+.label { font-size: 0.9rem; font-weight: 300; letter-spacing: 0.05em; text-transform: none; color: var(--dim); }
+#tl, #born { font-size: 0.8rem; }
+.lead { margin: 0; max-width: 30rem; font-weight: 300; font-style: normal; font-size: clamp(0.88rem, min(1.25vw, 2.4vh), 1.08rem); line-height: 1.7; color: var(--fg); }
+
+main { display: flex; flex-direction: column; gap: clamp(0.9rem, 3vh, 2rem); }
+
+.age { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--line); margin: 0; padding: 0; list-style: none; }
+.unit { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: clamp(0.35rem, 1.2vh, 0.8rem) 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.num { font-weight: 200; font-size: clamp(1.7rem, min(8vw, 5.6vh), 2.8rem); font-variant-numeric: lining-nums tabular-nums; text-shadow: 0 0 22px rgba(255, 255, 255, 0.22), 0 0 3px #000; letter-spacing: -0.02em; line-height: 1; }
+.unit.sec .num { font-weight: 300; }
+.unit.sec .label::before { content: ""; display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--fg); margin-inline-end: 0.7rem; animation: tick 1s steps(1) infinite; }
+@keyframes tick { 50% { opacity: 0.15; } }
+@media (min-width: 560px) { .unit { flex-direction: row-reverse; } .unit .label { flex: 1; } }
+@media (min-width: 1000px) {
+  .age { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .unit { flex-direction: column-reverse; align-items: flex-start; justify-content: flex-end; gap: clamp(0.5rem, 1.6vh, 1rem); padding-block: clamp(0.8rem, 2.6vh, 1.4rem); padding-inline: 1.2rem 1rem; border-inline-end: 1px solid var(--line); }
+  .unit:first-child { padding-inline-start: 0; }
+  .unit:last-child { border-inline-end: 0; }
+  .num { font-size: clamp(2.3rem, min(4.4vw, 8.5vh), 4.8rem); }
+}
+
+.total { display: flex; flex-direction: column; gap: 0.4rem; }
+.total .big { font-weight: 200; font-variant-numeric: lining-nums tabular-nums; text-shadow: 0 0 22px rgba(255, 255, 255, 0.22), 0 0 3px #000; font-size: clamp(1.7rem, min(5.6vw, 7.5vh), 3.4rem); letter-spacing: -0.02em; word-break: break-all; line-height: 1.1; }
+
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+.cta { color: var(--fg); font-size: 0.95rem; font-weight: 300; text-decoration: underline; text-underline-offset: 0.5em; text-decoration-thickness: 1px; transition: color 0.2s; }
+.cta:hover { color: var(--dim); }
+.cta:focus-visible { outline: 3px solid var(--fg); outline-offset: 6px; }
+
+html[data-ls="0"] .label { letter-spacing: 0; }
+
+/* top block: the text and the game link under it */
+header { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(0.6rem, 2vh, 1.1rem); }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.8rem; }
+button.cta { background: none; border: 0; padding: 0; font-family: inherit; cursor: pointer; }
+[hidden] { display: none !important; }
+
+/* the price of a second: a small ritual in a dark overlay */
+.ritual { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.95); padding: max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); text-shadow: 0 0 14px #000; }
+.rbox, .rans { width: 100%; max-width: 36rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.6rem; }
+.rq { margin: 0; font-weight: 300; font-size: clamp(1.3rem, min(3.2vw, 5vh), 1.9rem); line-height: 1.4; }
+.rin { width: 100%; max-width: 20rem; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.4); border-radius: 0; color: var(--fg); font: inherit; font-weight: 300; font-size: 1.5rem; text-align: center; padding: 0.4rem 0; outline: none; text-shadow: none; }
+.rin:focus { border-bottom-color: var(--fg); }
+.rin::placeholder { color: var(--dim); }
+.rgo { background: none; border: 1px solid var(--fg); color: var(--fg); font: inherit; font-weight: 300; font-size: 1.05rem; letter-spacing: 0.05em; padding: 0.7rem 2.2rem; cursor: pointer; transition: background 0.2s, color 0.2s; text-shadow: none; }
+.rgo:hover { background: var(--fg); color: #000; }
+.rgo:focus-visible, .rclose:focus-visible { outline: 3px solid var(--fg); outline-offset: 4px; }
+.rclose { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); inset-inline-end: max(16px, env(safe-area-inset-right, 0px)); background: none; border: 0; color: var(--fg); font: inherit; font-weight: 200; font-size: 2.4rem; line-height: 1; padding: 0.3rem 0.8rem; cursor: pointer; }
+.rword { margin: 0; font-weight: 200; font-size: clamp(1.7rem, min(4.4vw, 7vh), 2.8rem); line-height: 1.2; word-break: break-word; text-shadow: 0 0 22px rgba(255, 255, 255, 0.25), 0 0 3px #000; }
+.rtext { margin: 0; font-weight: 300; font-size: clamp(1.05rem, min(2.2vw, 3.6vh), 1.4rem); line-height: 1.6; }
+
+/* typewriter: every letter is already in place (so nothing jumps), it just appears one by one */
+.ch { opacity: 0; }
+.ch.on { opacity: 1; }
+.cur { display: inline-block; width: 0; height: 1em; position: relative; vertical-align: text-bottom; }
+.cur::after { content: ""; position: absolute; inset-inline-start: 0.1em; top: 0.05em; width: 1px; height: 1.05em; background: var(--fg); animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+.ritual { overflow-y: auto; align-items: safe center; }
+.rans { padding-block: 2.5rem; }
+.rtext { font-size: clamp(1rem, min(1.9vw, 3vh), 1.25rem); line-height: 1.75; text-align: start; }
+.foot { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem 1.2rem; align-items: center; }
+.foot #born { grid-column: 1 / -1; }
+.foot .cta { grid-column: 1; grid-row: 2; justify-self: start; }
+.foot #visits { grid-column: 2; grid-row: 2; justify-self: end; }
+#visits { font-size: 0.95rem; line-height: 1.5; font-variant-numeric: lining-nums tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .unit.sec .label::before { animation: none; } }
+</style>
+</head>
+<body>
+
+
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="shade" aria-hidden="true"></div>
+
+<div class="page">
+  <header>
+    <p class="lead label" id="lead">This site ages, just like you! Every second here lives exactly once!</p>
+    <button type="button" class="label cta" id="gameBtn">The price of a second</button>
+  </header>
+
+  <main>
+    <ul class="age" role="timer" aria-label="Age of the site">
+      <li class="unit"><span class="num" id="y">0</span><span class="label" id="yl">years</span></li>
+      <li class="unit"><span class="num" id="mo">0</span><span class="label" id="mol">months</span></li>
+      <li class="unit"><span class="num" id="w">0</span><span class="label" id="wl">weeks</span></li>
+      <li class="unit"><span class="num" id="d">0</span><span class="label" id="dl">days</span></li>
+      <li class="unit"><span class="num" id="h">00</span><span class="label" id="hl">hours</span></li>
+      <li class="unit"><span class="num" id="mi">00</span><span class="label" id="mil">minutes</span></li>
+      <li class="unit sec"><span class="num" id="s">00</span><span class="label" id="sl">seconds</span></li>
+    </ul>
+
+    <div class="total">
+      <span class="label" id="tl">Total seconds lived</span>
+      <span class="big" id="total">0</span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span class="label" id="born">Born: 25 November 2026, 00:00 (UTC+4)</span>
+    <span class="label" id="visits"></span>
+    <a class="label cta" id="cta" href="https://dalink.to/blackliminal" target="_blank" rel="noopener">Donation</a>
+  </footer>
+</div>
+
+<div class="ritual" id="ritual" role="dialog" aria-modal="true" aria-labelledby="rq" hidden>
+  <button class="rclose" id="rclose" type="button" aria-label="Close">&times;</button>
+  <form class="rbox" id="rform" autocomplete="off">
+    <p class="rq" id="rq">What would you give for one second from the past?</p>
+    <input class="rin" id="rin" type="text" maxlength="24" autocomplete="off" autocapitalize="off" spellcheck="false" aria-labelledby="rq" placeholder="one word">
+    <button class="rgo" id="rgo" type="submit">Give</button>
+  </form>
+  <div class="rans" id="rans" hidden>
+    <p class="rword" id="rword"></p>
+    <p class="rtext" id="rtext"></p>
+  </div>
+</div>
+
+<script>
+/* ---------- Age counter, translated to the visitor's language ---------- */
+(function () {
+  // Moment the site was born. The same for every visitor, so everyone sees the same age.
+  var BIRTH = Date.parse('2026-11-25T00:00:00+04:00');
+
+  // lead sentence, label for the total, word for "born"
+  var TR = {
+    en: ["This site ages, just like you!\nEvery second here lives exactly once!", 'Total seconds lived', 'Born', 'Donation', 'Time can\'t be brought back.'],
+    ru: ["Сайт стареет, как и ты!\nКаждая секунда здесь живёт ровно один раз!", 'Всего прожито секунд', 'Родился', 'Пожертвование', 'Время не вернуть.'],
+    uk: ["Сайт старіє, як і ти!\nКожна секунда тут живе рівно один раз!", 'Усього прожито секунд', 'Народився', 'Пожертва', 'Час не повернути.'],
+    bg: ["Сайтът остарява, също като теб!\nВсяка секунда тук живее точно веднъж!", 'Общо изживени секунди', 'Роден', 'Дарение', 'Времето не може да се върне.'],
+    es: ["¡El sitio envejece, igual que tú!\n¡Cada segundo aquí vive exactamente una vez!", 'Segundos vividos en total', 'Nació', 'Donación', 'El tiempo no se recupera.'],
+    pt: ["O site envelhece, assim como você!\nCada segundo aqui vive exatamente uma vez!", 'Total de segundos vividos', 'Nasceu', 'Doação', 'O tempo não volta.'],
+    fr: ["Le site vieillit, comme vous !\nChaque seconde ici ne vit qu’une seule fois !", 'Total de secondes vécues', 'Né le', 'Don', 'Le temps ne se rattrape pas.'],
+    de: ["Die Seite altert, genau wie du!\nJede Sekunde lebt hier genau einmal!", 'Gelebte Sekunden insgesamt', 'Geboren', 'Spende', 'Zeit kommt nicht zurück.'],
+    it: ["Il sito invecchia, proprio come te!\nOgni secondo qui vive esattamente una volta!", 'Secondi vissuti in totale', 'Nato il', 'Donazione', 'Il tempo non torna indietro.'],
+    nl: ["De site veroudert, net als jij!\nElke seconde leeft hier precies één keer!", 'Totaal geleefde seconden', 'Geboren', 'Donatie', 'Tijd komt niet terug.'],
+    pl: ["Strona się starzeje, tak jak ty!\nKażda sekunda żyje tu dokładnie raz!", 'Przeżytych sekund łącznie', 'Urodzona', 'Darowizna', 'Czasu nie da się cofnąć.'],
+    cs: ["Stránka stárne, stejně jako ty!\nKaždá vteřina tu žije přesně jednou!", 'Celkem prožitých sekund', 'Narozena', 'Dar', 'Čas se nedá vrátit.'],
+    sk: ["Stránka starne, tak ako ty!\nKaždá sekunda tu žije presne raz!", 'Spolu prežitých sekúnd', 'Narodená', 'Dar', 'Čas sa nedá vrátiť.'],
+    hr: ["Stranica stari, baš kao i ti!\nSvaka sekunda ovdje živi točno jednom!", 'Ukupno proživljenih sekundi', 'Rođena', 'Donacija', 'Vrijeme se ne može vratiti.'],
+    ro: ["Site-ul îmbătrânește, la fel ca tine!\nFiecare secundă trăiește aici exact o dată!", 'Total secunde trăite', 'Născut', 'Donație', 'Timpul nu se întoarce.'],
+    hu: ["Az oldal öregszik, akárcsak te!\nItt minden másodperc pontosan egyszer él!", 'Összes megélt másodperc', 'Született', 'Adomány', 'Az időt nem lehet visszahozni.'],
+    el: ["Ο ιστότοπος γερνά, όπως κι εσύ!\nΚάθε δευτερόλεπτο εδώ ζει ακριβώς μία φορά!", 'Συνολικά δευτερόλεπτα ζωής', 'Γεννήθηκε', 'Δωρεά', 'Ο χρόνος δεν γυρίζει πίσω.'],
+    tr: ["Site yaşlanıyor, tıpkı senin gibi!\nBurada her saniye tam olarak bir kez yaşar!", 'Toplam yaşanan saniye', 'Doğum', 'Bağış', 'Zaman geri gelmez.'],
+    sv: ["Webbplatsen åldras, precis som du!\nVarje sekund lever här exakt en gång!", 'Totalt levda sekunder', 'Född', 'Donation', 'Tiden kommer inte tillbaka.'],
+    no: ["Nettstedet eldes, akkurat som deg!\nHvert sekund lever her nøyaktig én gang!", 'Totalt levde sekunder', 'Født', 'Donasjon', 'Tiden kommer ikke tilbake.'],
+    da: ["Websitet ældes, ligesom dig!\nHvert sekund lever her præcis én gang!", 'Samlede levede sekunder', 'Født', 'Donation', 'Tiden kommer ikke tilbage.'],
+    fi: ["Sivusto vanhenee, aivan kuten sinä!\nJokainen sekunti elää täällä täsmälleen kerran!", 'Eletyt sekunnit yhteensä', 'Syntynyt', 'Lahjoitus', 'Aikaa ei saa takaisin.'],
+    ar: ["الموقع يشيخ، مثلك تمامًا!\nكل ثانية هنا تعيش مرة واحدة فقط!", 'إجمالي الثواني التي عاشها', 'وُلد في', 'تبرّع', 'الوقت لا يعود.'],
+    he: ["האתר מזדקן, בדיוק כמוך!\nכל שנייה כאן חיה בדיוק פעם אחת!", 'סך כל השניות שחלפו', 'נולד', 'תרומה', 'את הזמן אי אפשר להחזיר.'],
+    fa: ["این سایت پیر می‌شود، درست مثل تو!\nهر ثانیه اینجا دقیقاً یک بار زندگی می‌کند!", 'مجموع ثانیه‌های زندگی‌شده', 'تولد', 'کمک مالی', 'زمان بازنمی‌گردد.'],
+    ur: ["یہ ویب سائٹ بوڑھی ہو رہی ہے، بالکل تمہاری طرح!\nیہاں ہر سیکنڈ بس ایک ہی بار جیتا ہے!", 'کل جیے گئے سیکنڈ', 'پیدائش', 'عطیہ', 'وقت واپس نہیں آتا۔'],
+    hi: ["यह साइट बूढ़ी हो रही है, बिल्कुल तुम्हारी तरह!\nयहाँ हर सेकंड ठीक एक बार जीता है!", 'कुल बीते सेकंड', 'जन्म', 'दान', 'समय लौटकर नहीं आता।'],
+    bn: ["এই সাইট বুড়ো হচ্ছে, ঠিক তোমার মতো!\nএখানে প্রতিটি সেকেন্ড ঠিক একবারই বাঁচে!", 'মোট অতিবাহিত সেকেন্ড', 'জন্ম', 'দান', 'সময় ফিরে আসে না।'],
+    id: ["Situs ini menua, sama seperti kamu!\nSetiap detik di sini hidup tepat satu kali!", 'Total detik yang dijalani', 'Lahir', 'Donasi', 'Waktu tak bisa kembali.'],
+    ms: ["Laman web ini menua, sama seperti anda!\nSetiap saat di sini hidup tepat sekali!", 'Jumlah saat yang dilalui', 'Lahir', 'Derma', 'Masa tidak boleh diundur.'],
+    vi: ["Trang web này già đi, giống như bạn!\nMỗi giây ở đây chỉ sống đúng một lần!", 'Tổng số giây đã sống', 'Sinh ngày', 'Quyên góp', 'Thời gian không thể quay lại.'],
+    th: ["เว็บไซต์นี้แก่ลง เหมือนกับคุณ!\nทุกวินาทีที่นี่มีชีวิตเพียงครั้งเดียว!", 'วินาทีที่ผ่านไปทั้งหมด', 'เกิดเมื่อ', 'บริจาค', 'เวลาย้อนกลับไม่ได้'],
+    zh: ["这个网站在变老，和你一样！\n这里的每一秒只活一次！", '累计已度过的秒数', '诞生于', '捐赠', '时间无法倒流。'],
+    'zh-Hant': ["這個網站在變老，和你一樣！\n這裡的每一秒只活一次！", '累計已度過的秒數', '誕生於', '捐款', '時間無法倒流。'],
+    ja: ["このサイトは歳をとる。あなたと同じように！\nここでは、一秒一秒がたった一度だけ生きる！", '経過した秒数の合計', '誕生', '寄付', '時間は戻らない。'],
+    ko: ["이 사이트는 당신처럼 늙어갑니다!\n이곳의 모든 초는 단 한 번만 삽니다!", '지금까지 흐른 총 초', '탄생', '후원', '시간은 되돌릴 수 없다.'],
+    kk: ["Сайт қартаяды, дәл сен сияқты!\nМұндағы әр секунд тек бір рет қана өмір сүреді!", 'Барлығы өткен секунд', 'Туған күні', 'Қайырымдылық', 'Уақытты қайтару мүмкін емес.'],
+    uz: ["Sayt qariydi, xuddi sen kabi!\nBu yerda har bir soniya aynan bir marta yashaydi!", 'Jami o‘tgan soniyalar', 'Tug‘ilgan', 'Xayriya', 'Vaqtni qaytarib bo‘lmaydi.'],
+    az: ["Sayt qocalır, sən də qocaldığın kimi!\nBurada hər saniyə dəqiq bir dəfə yaşayır!", 'Ümumilikdə keçən saniyələr', 'Doğulub', 'İanə', 'Vaxtı geri qaytarmaq olmaz.'],
+    sw: ["Tovuti inazeeka, kama wewe!\nKila sekunde hapa huishi mara moja tu!", 'Jumla ya sekunde zilizoishi', 'Ilizaliwa', 'Mchango', 'Muda hauwezi kurudishwa.'],
+    fil: ["Tumatanda ang site, tulad mo!\nBawat segundo rito ay nabubuhay nang isang beses lang!", 'Kabuuang segundong nabuhay', 'Isinilang', 'Donasyon', 'Hindi na maibabalik ang oras.']
+  };
+  var RTL = { ar: 1, he: 1, fa: 1, ur: 1 };
+
+  // Prints the top line letter by letter, like a typewriter.
+  function typeLead(p, text) {
+    p.setAttribute('aria-label', text.replace(/\n/g, ' '));
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { p.textContent = text.replace(/\n/g, ' '); return; }
+    var chars;
+    try { chars = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), function (x) { return x.segment; }); }
+    catch (e) { chars = Array.from(text); }
+    p.textContent = '';
+    var spans = chars.map(function (c) { var el = document.createElement('span'); el.className = 'ch'; el.setAttribute('aria-hidden', 'true'); if (c === '\n') el.appendChild(document.createElement('br')); else el.textContent = c; p.appendChild(el); return el; });
+    var cur = document.createElement('span'); cur.className = 'cur'; cur.setAttribute('aria-hidden', 'true');
+    p.insertBefore(cur, spans[0]);
+    var i = 0, erasing = false;
+    // types the line, waits, erases it a bit faster, waits, and starts again, forever
+    function step() {
+      if (!erasing) {
+        if (i >= spans.length) { erasing = true; setTimeout(step, 3500); return; }
+        spans[i].className = 'ch on';
+        p.insertBefore(cur, spans[i].nextSibling);
+        var c = chars[i]; i++;
+        setTimeout(step, 45 + Math.random() * 70 + (/[.,;:!?。、，]/.test(c) ? 260 : 0));
+      } else {
+        if (i <= 0) { erasing = false; p.insertBefore(cur, spans[0]); setTimeout(step, 900); return; }
+        i--;
+        spans[i].className = 'ch';
+        p.insertBefore(cur, spans[i]);
+        setTimeout(step, 22);
+      }
+    }
+    setTimeout(step, 700);
+  }
+  var NOSPACE = { ar: 1, fa: 1, ur: 1, hi: 1, bn: 1, th: 1 };
+
+  function pick() {
+    var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+    for (var i = 0; i < list.length; i++) {
+      var s = String(list[i]).toLowerCase();
+      if (/^zh/.test(s)) return /hant|-tw|-hk|-mo/.test(s) ? 'zh-Hant' : 'zh';
+      var b = s.split('-')[0];
+      if (b === 'nb' || b === 'nn') b = 'no';
+      if (b === 'tl') b = 'fil';
+      if (TR[b]) return b;
+    }
+    return 'en';
+  }
+  var code = pick();
+  var tr = TR[code];
+  var root = document.documentElement;
+  root.lang = code;
+  if (RTL[code]) root.dir = 'rtl';
+  if (NOSPACE[code]) root.setAttribute('data-ls', '0');
+  typeLead(document.getElementById('lead'), tr[0]);
+  document.getElementById('tl').textContent = tr[1];
+  document.getElementById('cta').textContent = tr[3];
+  try {
+    var df;
+    try { df = new Intl.DateTimeFormat(code, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Etc/GMT-4', numberingSystem: 'latn' }); }
+    catch (e) { df = new Intl.DateTimeFormat(code, { dateStyle: 'long', timeStyle: 'short', timeZone: 'Etc/GMT-4' }); }
+    document.getElementById('born').textContent = tr[2] + ': ' + df.format(BIRTH) + ' (UTC+4)';
+  } catch (e) {}
+
+  // Unit names (years, months, ... with correct plural forms) come from the browser's own language data.
+  var UNITS = { y: 'year', mo: 'month', w: 'week', d: 'day', h: 'hour', mi: 'minute', s: 'second' };
+  var EN = { y: ['year', 'years'], mo: ['month', 'months'], w: ['week', 'weeks'], d: ['day', 'days'], h: ['hour', 'hours'], mi: ['minute', 'minutes'], s: ['second', 'seconds'] };
+  var fmt = {}, el = {};
+  ['y', 'mo', 'w', 'd', 'h', 'mi', 's'].forEach(function (k) {
+    el[k] = document.getElementById(k); el[k + 'l'] = document.getElementById(k + 'l');
+    try { fmt[k] = new Intl.NumberFormat(code, { style: 'unit', unit: UNITS[k], unitDisplay: 'long' }); } catch (e) {}
+  });
+  function unitName(k, v) {
+    if (fmt[k]) {
+      try {
+        var parts = fmt[k].formatToParts(v), out = [];
+        for (var i = 0; i < parts.length; i++) if (parts[i].type === 'unit') out.push(parts[i].value);
+        var t = out.join(' ').trim();
+        if (t) return t;
+      } catch (e) {}
+    }
+    return EN[k][v === 1 ? 0 : 1];
+  }
+  var nf;
+  try { nf = new Intl.NumberFormat(code, { numberingSystem: 'latn' }); } catch (e) { nf = new Intl.NumberFormat(); }
+  var totalEl = document.getElementById('total');
+  var last = {};
+
+  function addMonths(b, m) {
+    return Date.UTC(b.getUTCFullYear(), b.getUTCMonth() + m, b.getUTCDate(), b.getUTCHours(), b.getUTCMinutes(), b.getUTCSeconds(), b.getUTCMilliseconds());
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function set(k, v, text) {
+    if (last[k] === text) return;
+    last[k] = text;
+    el[k].textContent = text;
+    el[k + 'l'].textContent = unitName(k, v);
+  }
+
+  function render() {
+    var now = Math.max(Date.now(), BIRTH);
+    var b = new Date(BIRTH), n = new Date(now);
+    var months = (n.getUTCFullYear() - b.getUTCFullYear()) * 12 + (n.getUTCMonth() - b.getUTCMonth());
+    var anchor = addMonths(b, months);
+    if (anchor > now) { months--; anchor = addMonths(b, months); }
+    var rem = Math.floor((now - anchor) / 1000);
+    var years = Math.floor(months / 12); months = months % 12;
+    var days = Math.floor(rem / 86400); rem -= days * 86400;
+    var weeks = Math.floor(days / 7); days = days % 7;
+    var hours = Math.floor(rem / 3600); rem -= hours * 3600;
+    var mins = Math.floor(rem / 60); var secs = rem - mins * 60;
+
+    set('y', years, '' + years);
+    set('mo', months, '' + months);
+    set('w', weeks, '' + weeks);
+    set('d', days, '' + days);
+    set('h', hours, pad(hours));
+    set('mi', mins, pad(mins));
+    set('s', secs, pad(secs));
+    var t = nf.format(Math.floor((now - BIRTH) / 1000));
+    if (last.t !== t) { last.t = t; totalEl.textContent = t; }
+  }
+
+  function loop() {
+    render();
+    setTimeout(loop, 1000 - (Date.now() % 1000) + 5);
+  }
+  loop();
+  document.addEventListener('visibilitychange', render);
+})();
+
+
+/* ---------- The price of a second (a small game with words) ---------- */
+(function () {
+  var G = {"en": ["The price of a second", "What would you give for one second from the past?", "one word", "Give", "The second accepts your offer. It will return when you stop waiting for it.", "The corridor remembers your word. Behind the next door it will sound different.", "Time takes the offering and gives nothing back. That is how it keeps its balance.", "That second was already yours. You only forgot where you left it."], "ru": ["Цена секунды", "Что бы ты отдал за одну секунду из прошлого?", "одно слово", "Отдать", "Секунда принимает твой дар. Она вернётся, когда ты перестанешь её ждать.", "Коридор запомнил твоё слово. За следующей дверью оно прозвучит иначе.", "Время берёт дар и ничего не возвращает. Так оно хранит равновесие.", "Эта секунда уже была твоей. Ты просто забыл, где её оставил."], "uk": ["Ціна секунди", "Що б ти віддав за одну секунду з минулого?", "одне слово", "Віддати", "Секунда приймає твій дар. Вона повернеться, коли ти перестанеш її чекати.", "Коридор запам’ятав твоє слово. За наступними дверима воно прозвучить інакше.", "Час бере дар і нічого не повертає. Так він зберігає рівновагу.", "Ця секунда вже була твоєю. Ти просто забув, де її залишив."], "bg": ["Цената на секундата", "Какво би дал за една секунда от миналото?", "една дума", "Дай", "Секундата приема твоя дар. Тя ще се върне, когато спреш да я чакаш.", "Коридорът запомни думата ти. Зад следващата врата тя ще прозвучи различно.", "Времето взема дара и нищо не връща. Така пази равновесие.", "Тази секунда вече беше твоя. Просто си забравил къде си я оставил."], "es": ["El precio de un segundo", "¿Qué darías por un segundo del pasado?", "una palabra", "Dar", "El segundo acepta tu ofrenda. Volverá cuando dejes de esperarlo.", "El pasillo recuerda tu palabra. Tras la próxima puerta sonará distinta.", "El tiempo toma la ofrenda y no devuelve nada. Así mantiene su equilibrio.", "Ese segundo ya era tuyo. Solo olvidaste dónde lo dejaste."], "pt": ["O preço de um segundo", "O que você daria por um segundo do passado?", "uma palavra", "Dar", "O segundo aceita a sua oferta. Ele voltará quando você deixar de esperá-lo.", "O corredor lembra da sua palavra. Atrás da próxima porta ela soará diferente.", "O tempo recebe a oferenda e não devolve nada. É assim que ele mantém o equilíbrio.", "Esse segundo já era seu. Você só esqueceu onde o deixou."], "fr": ["Le prix d’une seconde", "Que donneriez-vous pour une seconde du passé ?", "un mot", "Donner", "La seconde accepte votre offrande. Elle reviendra quand vous cesserez de l’attendre.", "Le couloir se souvient de votre mot. Derrière la prochaine porte, il sonnera autrement.", "Le temps prend l’offrande et ne rend rien. C’est ainsi qu’il garde son équilibre.", "Cette seconde était déjà à vous. Vous avez seulement oublié où vous l’aviez laissée."], "de": ["Der Preis einer Sekunde", "Was würdest du für eine Sekunde aus der Vergangenheit geben?", "ein Wort", "Geben", "Die Sekunde nimmt dein Opfer an. Sie kehrt zurück, wenn du aufhörst, auf sie zu warten.", "Der Gang erinnert sich an dein Wort. Hinter der nächsten Tür klingt es anders.", "Die Zeit nimmt die Gabe und gibt nichts zurück. So hält sie ihr Gleichgewicht.", "Diese Sekunde war schon deine. Du hast nur vergessen, wo du sie gelassen hast."], "it": ["Il prezzo di un secondo", "Cosa daresti per un secondo del passato?", "una parola", "Dai", "Il secondo accetta la tua offerta. Tornerà quando smetterai di aspettarlo.", "Il corridoio ricorda la tua parola. Dietro la prossima porta suonerà diversa.", "Il tempo prende l’offerta e non restituisce nulla. Così mantiene il suo equilibrio.", "Quel secondo era già tuo. Hai solo dimenticato dove l’hai lasciato."], "nl": ["De prijs van een seconde", "Wat zou je geven voor één seconde uit het verleden?", "één woord", "Geef", "De seconde aanvaardt je offer. Ze keert terug zodra je niet meer op haar wacht.", "De gang onthoudt je woord. Achter de volgende deur klinkt het anders.", "De tijd neemt de gave aan en geeft niets terug. Zo houdt hij zijn evenwicht.", "Die seconde was al van jou. Je bent alleen vergeten waar je haar liet."], "pl": ["Cena sekundy", "Co oddałbyś za jedną sekundę z przeszłości?", "jedno słowo", "Oddaj", "Sekunda przyjmuje twój dar. Wróci, gdy przestaniesz na nią czekać.", "Korytarz zapamiętał twoje słowo. Za kolejnymi drzwiami zabrzmi inaczej.", "Czas bierze dar i nic nie zwraca. Tak utrzymuje równowagę.", "Ta sekunda już była twoja. Zapomniałeś tylko, gdzie ją zostawiłeś."], "cs": ["Cena vteřiny", "Co bys dal za jednu vteřinu z minulosti?", "jedno slovo", "Dát", "Vteřina přijímá tvůj dar. Vrátí se, až na ni přestaneš čekat.", "Chodba si pamatuje tvé slovo. Za dalšími dveřmi bude znít jinak.", "Čas dar přijme a nic nevrací. Tak udržuje rovnováhu.", "Ta vteřina už byla tvá. Jen jsi zapomněl, kde jsi ji nechal."], "sk": ["Cena sekundy", "Čo by si dal za jednu sekundu z minulosti?", "jedno slovo", "Dať", "Sekunda prijíma tvoj dar. Vráti sa, keď na ňu prestaneš čakať.", "Chodba si pamätá tvoje slovo. Za ďalšími dverami bude znieť inak.", "Čas dar prijme a nič nevracia. Tak udržiava rovnováhu.", "Tá sekunda už bola tvoja. Len si zabudol, kde si ju nechal."], "hr": ["Cijena sekunde", "Što bi dao za jednu sekundu iz prošlosti?", "jedna riječ", "Daj", "Sekunda prima tvoj dar. Vratit će se kad je prestaneš čekati.", "Hodnik pamti tvoju riječ. Iza sljedećih vrata zvučat će drukčije.", "Vrijeme uzima dar i ništa ne vraća. Tako čuva ravnotežu.", "Ta sekunda već je bila tvoja. Samo si zaboravio gdje si je ostavio."], "ro": ["Prețul unei secunde", "Ce ai da pentru o secundă din trecut?", "un cuvânt", "Dă", "Secunda îți primește darul. Se va întoarce când vei înceta să o aștepți.", "Coridorul îți ține minte cuvântul. După următoarea ușă va suna altfel.", "Timpul ia darul și nu dă nimic înapoi. Așa își păstrează echilibrul.", "Secunda aceea era deja a ta. Ai uitat doar unde ai lăsat-o."], "hu": ["Egy másodperc ára", "Mit adnál egyetlen másodpercért a múltból?", "egy szó", "Add", "A másodperc elfogadja az ajándékodat. Visszatér, ha már nem várod.", "A folyosó emlékszik a szavadra. A következő ajtó mögött másképp fog hangzani.", "Az idő elveszi az ajándékot, és semmit sem ad vissza. Így őrzi az egyensúlyát.", "Az a másodperc már a tiéd volt. Csak elfelejtetted, hol hagytad."], "el": ["Η τιμή ενός δευτερολέπτου", "Τι θα έδινες για ένα δευτερόλεπτο από το παρελθόν;", "μία λέξη", "Δώσε", "Το δευτερόλεπτο δέχεται την προσφορά σου. Θα γυρίσει όταν πάψεις να το περιμένεις.", "Ο διάδρομος θυμάται τη λέξη σου. Πίσω από την επόμενη πόρτα θα ηχεί αλλιώς.", "Ο χρόνος παίρνει το δώρο και δεν επιστρέφει τίποτα. Έτσι κρατά την ισορροπία του.", "Αυτό το δευτερόλεπτο ήταν ήδη δικό σου. Απλώς ξέχασες πού το άφησες."], "tr": ["Bir saniyenin bedeli", "Geçmişten bir saniye için ne verirdin?", "tek kelime", "Ver", "Saniye adağını kabul ediyor. Onu beklemeyi bıraktığında geri dönecek.", "Koridor kelimeni hatırlıyor. Bir sonraki kapının ardında farklı yankılanacak.", "Zaman adağı alır ve hiçbir şey geri vermez. Dengesini böyle korur.", "O saniye zaten senindi. Sadece nerede bıraktığını unuttun."], "sv": ["Priset för en sekund", "Vad skulle du ge för en sekund från det förflutna?", "ett ord", "Ge", "Sekunden tar emot din gåva. Den återvänder när du slutar vänta på den.", "Korridoren minns ditt ord. Bakom nästa dörr låter det annorlunda.", "Tiden tar emot gåvan och ger ingenting tillbaka. Så håller den balansen.", "Den sekunden var redan din. Du glömde bara var du lämnade den."], "no": ["Prisen for ett sekund", "Hva ville du gitt for ett sekund fra fortiden?", "ett ord", "Gi", "Sekundet tar imot gaven din. Det kommer tilbake når du slutter å vente på det.", "Korridoren husker ordet ditt. Bak neste dør vil det høres annerledes ut.", "Tiden tar imot gaven og gir ingenting tilbake. Slik holder den balansen.", "Det sekundet var allerede ditt. Du glemte bare hvor du la det."], "da": ["Prisen for et sekund", "Hvad ville du give for et sekund fra fortiden?", "ét ord", "Giv", "Sekundet tager imod din gave. Det vender tilbage, når du holder op med at vente på det.", "Korridoren husker dit ord. Bag den næste dør lyder det anderledes.", "Tiden tager imod gaven og giver intet tilbage. Sådan holder den balancen.", "Det sekund var allerede dit. Du glemte bare, hvor du lagde det."], "fi": ["Sekunnin hinta", "Mitä antaisit yhdestä sekunnista menneisyydestä?", "yksi sana", "Anna", "Sekunti ottaa lahjasi vastaan. Se palaa, kun lakkaat odottamasta sitä.", "Käytävä muistaa sanasi. Seuraavan oven takana se kuulostaa erilaiselta.", "Aika ottaa lahjan eikä anna mitään takaisin. Niin se pitää tasapainonsa.", "Se sekunti oli jo sinun. Unohdit vain, minne jätit sen."], "ar": ["ثمن ثانية", "ماذا ستعطي مقابل ثانية واحدة من الماضي؟", "كلمة واحدة", "أعطِ", "الثانية تقبل قربانك. ستعود حين تكفّ عن انتظارها.", "الممر يتذكر كلمتك. خلف الباب التالي سيبدو صداها مختلفًا.", "الزمن يأخذ القربان ولا يعيد شيئًا. هكذا يحافظ على توازنه.", "تلك الثانية كانت لك أصلًا. فقط نسيت أين تركتها."], "he": ["המחיר של שנייה", "מה היית נותן בעבור שנייה אחת מהעבר?", "מילה אחת", "תן", "השנייה מקבלת את מנחתך. היא תחזור כשתפסיק לחכות לה.", "המסדרון זוכר את המילה שלך. מאחורי הדלת הבאה היא תישמע אחרת.", "הזמן לוקח את המנחה ולא מחזיר דבר. כך הוא שומר על שיווי המשקל.", "השנייה הזאת כבר הייתה שלך. פשוט שכחת איפה השארת אותה."], "fa": ["بهای یک ثانیه", "برای یک ثانیه از گذشته چه می‌دادی؟", "یک کلمه", "بده", "ثانیه پیشکشت را می‌پذیرد. وقتی دیگر منتظرش نباشی بازمی‌گردد.", "راهرو کلمه‌ات را به یاد دارد. پشت در بعدی صدایش متفاوت خواهد بود.", "زمان پیشکش را می‌گیرد و چیزی پس نمی‌دهد. تعادلش را این‌گونه نگه می‌دارد.", "آن ثانیه از قبل مال تو بود. فقط یادت رفته کجا گذاشتی‌اش."], "ur": ["ایک سیکنڈ کی قیمت", "ماضی کے ایک سیکنڈ کے بدلے تم کیا دو گے؟", "ایک لفظ", "دو", "سیکنڈ تمہاری نذر قبول کرتا ہے۔ جب تم اس کا انتظار چھوڑ دو گے تو وہ لوٹ آئے گا۔", "راہداری کو تمہارا لفظ یاد ہے۔ اگلے دروازے کے پیچھے وہ مختلف سنائی دے گا۔", "وقت نذر لے لیتا ہے اور کچھ واپس نہیں کرتا۔ یوں وہ اپنا توازن برقرار رکھتا ہے۔", "وہ سیکنڈ پہلے ہی تمہارا تھا۔ بس تم بھول گئے کہ کہاں چھوڑا تھا۔"], "hi": ["एक सेकंड की कीमत", "अतीत के एक सेकंड के बदले तुम क्या दोगे?", "एक शब्द", "दो", "सेकंड तुम्हारा चढ़ावा स्वीकार करता है। जब तुम उसकी राह देखना छोड़ दोगे, वह लौट आएगा।", "गलियारे को तुम्हारा शब्द याद है। अगले दरवाज़े के पीछे वह अलग सुनाई देगा।", "समय चढ़ावा ले लेता है और कुछ नहीं लौटाता। इसी तरह वह अपना संतुलन रखता है।", "वह सेकंड पहले से तुम्हारा था। तुम बस भूल गए कि उसे कहाँ छोड़ा था।"], "bn": ["এক সেকেন্ডের দাম", "অতীতের এক সেকেন্ডের বিনিময়ে তুমি কী দেবে?", "একটি শব্দ", "দাও", "সেকেন্ড তোমার নিবেদন গ্রহণ করে। তুমি তার অপেক্ষা ছাড়লে সে ফিরে আসবে।", "করিডর তোমার শব্দটি মনে রেখেছে। পরের দরজার ওপারে তা অন্যরকম শোনাবে।", "সময় নিবেদন নেয় আর কিছু ফেরত দেয় না। এভাবেই সে ভারসাম্য রাখে।", "ওই সেকেন্ড আগে থেকেই তোমার ছিল। তুমি শুধু ভুলে গেছ কোথায় রেখেছিলে।"], "id": ["Harga satu detik", "Apa yang akan kamu berikan untuk satu detik dari masa lalu?", "satu kata", "Beri", "Detik itu menerima persembahanmu. Ia akan kembali saat kamu berhenti menunggunya.", "Lorong mengingat katamu. Di balik pintu berikutnya, kata itu akan terdengar berbeda.", "Waktu menerima persembahan dan tidak mengembalikan apa pun. Begitulah ia menjaga keseimbangan.", "Detik itu sudah menjadi milikmu. Kamu hanya lupa di mana meletakkannya."], "ms": ["Harga satu saat", "Apakah yang akan anda berikan untuk satu saat dari masa lalu?", "satu perkataan", "Beri", "Saat itu menerima persembahan anda. Ia akan kembali apabila anda berhenti menunggunya.", "Koridor mengingati perkataan anda. Di sebalik pintu seterusnya, ia akan kedengaran berbeza.", "Masa menerima persembahan dan tidak memulangkan apa-apa. Begitulah ia menjaga keseimbangan.", "Saat itu sudah menjadi milik anda. Anda cuma lupa di mana meletakkannya."], "vi": ["Cái giá của một giây", "Bạn sẽ đánh đổi điều gì để có một giây của quá khứ?", "một từ", "Trao", "Giây ấy nhận lễ vật của bạn. Nó sẽ trở lại khi bạn thôi chờ đợi.", "Hành lang nhớ từ của bạn. Sau cánh cửa kế tiếp, nó sẽ vang lên khác đi.", "Thời gian nhận lễ vật và không trả lại gì. Đó là cách nó giữ thăng bằng.", "Giây ấy vốn đã là của bạn. Bạn chỉ quên mình để nó ở đâu."], "th": ["ราคาของหนึ่งวินาที", "คุณจะยอมแลกอะไรเพื่อหนึ่งวินาทีจากอดีต", "หนึ่งคำ", "มอบ", "วินาทีรับเครื่องบูชาของคุณแล้ว มันจะกลับมาเมื่อคุณเลิกรอ", "ทางเดินจำคำของคุณได้ หลังประตูบานถัดไปมันจะฟังต่างออกไป", "เวลารับเครื่องบูชาและไม่คืนสิ่งใด นั่นคือวิธีที่มันรักษาสมดุล", "วินาทีนั้นเคยเป็นของคุณอยู่แล้ว คุณแค่ลืมว่าวางไว้ที่ไหน"], "zh": ["一秒的代价", "为了过去的一秒钟，你愿意付出什么？", "一个词", "献出", "这一秒接受了你的供奉。当你不再等待它时，它就会回来。", "走廊记住了你的词。在下一扇门后，它会听起来不一样。", "时间收下供奉，却什么也不归还。它就是这样保持平衡的。", "那一秒本来就属于你，只是你忘了把它放在哪里。"], "zh-Hant": ["一秒的代價", "為了過去的一秒鐘，你願意付出什麼？", "一個詞", "獻出", "這一秒接受了你的供奉。當你不再等待它時，它就會回來。", "走廊記住了你的詞。在下一扇門後，它會聽起來不一樣。", "時間收下供奉，卻什麼也不歸還。它就是這樣保持平衡的。", "那一秒本來就屬於你，只是你忘了把它放在哪裡。"], "ja": ["一秒の代価", "過去の一秒のために、あなたは何を差し出しますか？", "ひとこと", "捧げる", "その一秒はあなたの捧げものを受け取りました。待つのをやめたとき、戻ってきます。", "廊下はあなたの言葉を覚えています。次の扉の向こうでは、違って聞こえるでしょう。", "時間は捧げものを受け取り、何も返しません。そうして均衡を保っています。", "その一秒は、もともとあなたのものでした。置いた場所を忘れただけです。"], "ko": ["1초의 값", "과거의 1초를 위해 무엇을 내놓겠습니까?", "한 단어", "바치기", "그 1초가 당신의 제물을 받아들였습니다. 기다리기를 멈추면 돌아올 것입니다.", "복도는 당신의 말을 기억합니다. 다음 문 뒤에서는 다르게 들릴 것입니다.", "시간은 제물을 받고 아무것도 돌려주지 않습니다. 그렇게 균형을 지킵니다.", "그 1초는 이미 당신의 것이었습니다. 어디에 두었는지 잊었을 뿐입니다."], "kk": ["Бір секундтың бағасы", "Өткеннен бір секунд үшін нені берер едің?", "бір сөз", "Беру", "Секунд сенің сыйыңды қабылдады. Оны күтуді қойғанда, ол қайтып келеді.", "Дәліз сенің сөзіңді есте сақтады. Келесі есіктің ар жағында ол басқаша естіледі.", "Уақыт сыйды алады да, ештеңе қайтармайды. Теңдігін осылай сақтайды.", "Ол секунд бұрыннан сенікі еді. Тек қайда қалдырғаныңды ұмытып қалдың."], "uz": ["Bir soniyaning narxi", "O‘tmishdagi bir soniya uchun nimani berarding?", "bitta so‘z", "Ber", "Soniya sening ehsoningni qabul qildi. Uni kutishni to‘xtatganingda qaytadi.", "Yo‘lak so‘zingni eslab qoldi. Keyingi eshik ortida u boshqacha jaranglaydi.", "Vaqt ehsonni oladi va hech narsa qaytarmaydi. Muvozanatini shunday saqlaydi.", "O‘sha soniya allaqachon seniki edi. Faqat qayerda qoldirganingni unutding."], "az": ["Bir saniyənin qiyməti", "Keçmişdən bir saniyə üçün nə verərdin?", "bir söz", "Ver", "Saniyə sənin təqdimini qəbul edir. Onu gözləməyi dayandıranda qayıdacaq.", "Dəhliz sözünü xatırlayır. Növbəti qapının arxasında o fərqli səslənəcək.", "Zaman təqdimi alır və heç nə qaytarmır. Tarazlığını belə saxlayır.", "O saniyə artıq sənin idi. Sadəcə harada qoyduğunu unutdun."], "sw": ["Bei ya sekunde moja", "Ungetoa nini kwa sekunde moja kutoka zamani?", "neno moja", "Toa", "Sekunde inapokea sadaka yako. Itarudi utakapoacha kuisubiri.", "Ukanda unalikumbuka neno lako. Nyuma ya mlango unaofuata litasikika tofauti.", "Wakati unapokea sadaka na haurudishi chochote. Hivyo ndivyo unavyodumisha usawa.", "Sekunde ile ilikuwa yako tayari. Ulisahau tu ulipoiacha."], "fil": ["Ang presyo ng isang segundo", "Ano ang ibibigay mo para sa isang segundo mula sa nakaraan?", "isang salita", "Ibigay", "Tinatanggap ng segundo ang iyong handog. Babalik ito kapag tumigil ka na sa paghihintay.", "Naaalala ng pasilyo ang salita mo. Sa likod ng susunod na pinto, iba na ang tunog nito.", "Tinatanggap ng oras ang handog at wala itong ibinabalik. Ganito nito pinananatili ang balanse.", "Sa iyo na ang segundong iyon. Nakalimutan mo lang kung saan mo iniwan."]};
+  var lang = document.documentElement.lang || 'en';
+  var g = G[lang] || G.en;
+  var $ = function (id) { return document.getElementById(id); };
+  var ritual = $('ritual'), form = $('rform'), input = $('rin'), ans = $('rans'), word = $('rword'), text = $('rtext');
+  $('gameBtn').textContent = g[0];
+  $('rq').textContent = g[1];
+  input.placeholder = g[2];
+  $('rgo').textContent = g[3];
+  var lastFocus = null, timer = null;
+  /* the answers: the original four plus a long list; each one is shown before any can repeat */
+  var EXTRA = {ru: ["Прошлое не лежит на полках. Оно живёт в том, кто помнит, — и твоя секунда всё ещё дышит в тебе.", "Ты предлагаешь «{w}», а время спрашивает: хватит ли сил потерять то, что имеешь сейчас, ради того, чего уже нет?", "Секунда из прошлого — дверь, которая открывается только изнутри. Ты стоишь снаружи.", "Зеркало в конце коридора отразило «{w}» — и на мгновение слово стало старше тебя.", "Секунды уходят не прочь, а вглубь. Они не исчезают — они становятся фундаментом.", "«{w}» упало в темноту без звука. Но коридор стал на одну секунду длиннее.", "Верни тебе эту секунду — и ты поймёшь, что искал не её, а того, кем был тогда.", "Нельзя дважды войти в одну секунду, как и в одну реку. Но можно вспомнить — и каждый раз вода будет другой.", "Прошлое принимает только то, что ты уже отпустил. Поэтому дар засчитан.", "Время не продаёт — оно одалживает. Эта секунда куплена ценой следующей.", "Где-то за поворотом звенит секунда, которую ты не заметил. Она ждала и не обиделась.", "Одна секунда — целая вселенная для того, кто был в ней полностью. Вопрос лишь в том, присутствовал ли ты.", "Тень слова «{w}» легла на пол, и пол запомнил её навсегда. В коридоре стало на одну тень больше.", "Тебе кажется, что секунда ушла. Но это ты уходишь от неё, а она стоит на месте, как маяк.", "Мёртвые секунды не мертвы. Они спят в складках памяти и просыпаются от запаха, голоса, света.", "Цена не в слове. Цена в том, что, отдавая, ты признаёшь: прошлое чего-то стоит. А значит, стоишь и ты.", "Бесконечность не в далях. Она спрятана между двумя ударами сердца — там, где ты искал свою секунду.", "Весы времени не знают единиц. Они взвешивают лишь внимание, с которым прожито мгновение.", "Дверь за спиной закрылась тихо. Это не потеря — так выглядит завершённость.", "Произнося «{w}», ты уже немного там. Память — единственная машина времени, и она всегда в пути.", "Секунда обернулась и посмотрела на тебя. Ты её не узнаёшь — она узнала тебя первой.", "Ничто не возвращается прежним. Но то, что любишь, возвращается — просто под другим лицом.", "Время — не река и не стрела. Это коридор, и каждая дверь ведёт в комнату, где ты был счастлив или был собой.", "Ты готов отдать многое. Но отдавать нечего, пока не поймёшь, что у тебя уже есть всё.", "Пустота приняла дар и вернула эхо. Эхо — это и есть секунда, только без тела.", "В прошлом нет ничего, чего не было бы в тебе. Оно просто говорит оттуда голосом, который ты разучился слышать.", "Мгновение, прожитое до конца, равно вечности. Мгновение, пропущенное, равно ей тоже — только пустой.", "Тихо. Слышишь? Это не часы. Это секунды, которые ещё не решили, станут ли они твоим воспоминанием.", "Всё, что было, было навсегда. Прошлое — единственное, что нельзя отнять.", "Ты просишь секунду назад, а тебе предлагают целую жизнь вперёд. Обмен кажется неравным, но так и задумано.", "«{w}» — прозвучало в коридоре, и стены дрогнули, будто вспомнили, что когда-то тоже были чьим-то мгновением.", "Кто спросил, что ты отдашь? Возможно, это ты сам из будущего проверяешь, чему тебя научила дорога.", "Сон и память — одна страна с двумя границами. Секунда, которую ты ищешь, живёт на границе.", "Не бывает потерянного времени. Бывает время, которое не успело стать тобой.", "Свеча в конце коридора на миг вспыхнула ярче — и стало видно, что идти нужно не назад.", "Свобода — не вернуться, а перестать держать. Отпусти секунду, и она наконец полетит.", "Каждый раз, оглядываясь, ты меняешь прошлое: тебе кажется, что вспоминаешь, а на деле пишешь заново.", "За каждой секундой стоит тот, кто её прожил. Ты не один: он тоже скучает по тебе.", "Время не лечит и не калечит. Оно просто светит с другой стороны, и тени перемещаются.", "Слово отдано. Взамен коридор дарит тишину — самое точное имя той секунды."], en: ["The past is not shelved anywhere. It lives in whoever remembers, and your second still breathes in you.", "You offer “{w}”, and time asks: can you lose what you hold now for what no longer is?", "A second from the past is a door that opens only from the inside. You are standing outside.", "The mirror at the end of the corridor reflected “{w}”, and for a moment the word was older than you.", "Seconds do not leave, they sink. They do not vanish, they become foundation.", "“{w}” fell into the dark without a sound. The corridor is now one second longer.", "Were that second returned, you would see you were never asking for it, but for who you were then.", "One cannot enter the same second twice, like the same river. But one can remember, and the water is new each time.", "The past accepts only what you have already released. So the offering is counted.", "Time does not sell, it lends. This second was bought with the price of the next.", "Around a bend, a second you overlooked is still ringing. It waited for you and took no offense.", "One second is a whole universe to someone who was fully inside it. The question is whether you were.", "The shadow of “{w}” lay down on the floor and the floor remembered it. The corridor holds one more shadow now.", "You think the second left. It is you who drift away, while it stands still like a lighthouse.", "Dead seconds are not dead. They sleep in the folds of memory and wake to a scent, a voice, a light.", "The price is not the word. The price is the admission that the past is worth something, and so are you.", "Infinity is not in the distance. It hides between two heartbeats, where you were looking for your second.", "The scales of time know no units. They weigh only the attention with which a moment was lived.", "The door behind you closed softly. That is not loss, it is what completion looks like.", "Saying “{w}”, you are already partly there. Memory is the only time machine, and it is always en route.", "The second turned and looked at you. You do not recognize it, because it recognized you first.", "Nothing returns unchanged. But what you loved does return, wearing another face.", "Time is neither river nor arrow. It is a corridor, and every door opens onto a room where you were happy or were yourself.", "You would give much. Yet there is nothing to give until you see that you already have everything.", "The void took your gift and returned an echo. The echo is the second itself, only without a body.", "The past holds nothing that is not also in you. It speaks from there in a voice you forgot how to hear.", "A moment lived to the end equals eternity. A moment missed equals it too, only empty.", "Listen. That is not a clock. Those are seconds still deciding whether to become your memory.", "Whatever was, was forever. The past is the one thing that cannot be taken from you.", "You ask for a second back, and you are offered a whole life ahead. The trade seems unequal, and is meant to.", "“{w}” echoed down the corridor and the walls trembled, as if remembering they were once someone’s moment.", "Who asked what you would give? Perhaps it is you, from the future, checking what the road has taught you.", "Sleep and memory are one country with two borders. The second you seek lives on the border.", "There is no lost time. There is only time that did not get to become you.", "The candle at the end of the corridor flared, and it became clear that the way is not backward.", "Freedom is not returning, it is ceasing to hold. Let the second go and it will finally fly.", "Each time you look back you change the past: you think you are remembering, but you are writing anew.", "Behind every second stands the one who lived it. You are not alone: that one misses you too.", "Time neither heals nor wounds. It simply shines from another side, and the shadows move.", "The word is given. In return the corridor grants silence, the truest name of that second."]};
+  var STORIES = {ru: ["Жил в одной деревне часовщик, который чинил всё, кроме собственных часов. Однажды к нему пришёл странник и попросил остановить одну секунду, предлагая взамен слово «{w}». Часовщик улыбнулся: «Остановить нельзя. Но можно прожить её так внимательно, что она станет длиннее года». Странник ушёл, а часовщик впервые за много лет услышал, как тикает его собственное сердце.", "Говорят, в конце коридора стоит старик и собирает забытые секунды в стеклянную банку. Когда звучит «{w}», одна из них вспыхивает. «Твоя, — говорит он. — Она ускользнула в тот день, когда ты решил, что таких ещё будет много». Он протягивает банку, но она пуста. Секунды нельзя унести с собой. Их можно только узнать.", "Река спросила у камня на дне: «Почему ты не плывёшь со мной?» Камень ответил: «Я храню то место, где ты была вчера». Секунда из прошлого — такой камень: она неподвижна, пока всё течёт мимо. Ты несёшь «{w}», чтобы вернуться к ней, но, быть может, достаточно просто сесть на берегу и послушать воду.", "Три двери стояли в тумане. За первой жило «было», за второй «есть», за третьей «будет». Ты стучишься в первую со словом «{w}» в руках. Дверь не открывается, но из-под неё льётся тёплый свет, как из кухни, где когда-то тебя ждали. Философы спорят, существует ли прошлое. Свет под дверью не спорит. Он просто светит.", "Монах в горном храме двадцать лет подметал один и тот же двор. Новичок спросил: «Разве не скучно?» Монах ответил: «Каждый лист падает впервые». Секунда, о которой ты просишь, тоже падала впервые. Ты отдаёшь «{w}», а получаешь урок: прошлое не повторяется, оно было единственным в своём роде, и этого достаточно.", "В городе без часов жил ребёнок, который верил: если крепко зажмуриться, услышишь, как секунды падают в колодец времени. Он зажмурился и бросил туда «{w}». Ответа не было очень долго. Потом снизу донеслось эхо, не слово, а смех. Тот самый, давний. Колодец ничего не возвращает, но иногда делится тем, что сохранил.", "У каждого человека есть карта, на которой отмечены места, где он был по-настоящему. Это не города, а мгновения, и их мало. Ты кладёшь «{w}» на стол, и одна точка на карте дрожит. Это не место на земле. Это секунда, когда ты не думал ни о прошлом, ни о будущем и потому был жив целиком. Дороги туда нет, но есть способ: прожить так снова, сейчас.", "Философ сказал ученикам: «Если бы я мог вернуть одну секунду, я выбрал бы самую обычную». Ученики удивились. «Великие мгновения мы помним и так, — пояснил он. — А обычные исчезают, хотя жизнь сшита именно из них». Слово «{w}» принято. Пусть сегодняшняя обычная секунда станет той, о которой однажды захочется попросить.", "В тёмном углу вселенной паук плетёт нить, и каждая её бусина — чья-то секунда. Он не помнит имён, но помнит узор. Когда звучит «{w}», нить натягивается и тихо гудит: где-то далеко отзывается твоя прежняя секунда. Ничто не потеряно, говорит паук. Всё лишь отдалилось по нити, а расстояние между вами называется временем.", "На краю света стоит мельница, которая мелет не зерно, а мгновения. Мельник берёт плату не деньгами, а тем, без чего человек сумеет жить. Ты приносишь «{w}», он взвешивает слово на ладони и кивает. «Этого хватит, чтобы вернуть тебе взгляд на ту секунду, — говорит он. — Саму её вернуть нельзя, а вот смотреть на неё глубже, чем раньше, можно».", "Однажды ночью зеркало в старом доме заговорило: «Я храню не лица, а секунды между ними». Ты шепчешь «{w}», и в стекле проходит что-то неуловимое. Не картинка, а ощущение, будто в соседней комнате кто-то перестал дышать, чтобы тебя не спугнуть. Прошлое умеет быть деликатным. Оно ждёт, пока ты сам обернёшься.", "Маятник не знает слова «назад». Он идёт вправо, потом влево, и всё это называют ходом вперёд. Так и ты: кажется, что возвращаешься к прошлому, а на деле раскачиваешься, чтобы набрать размах. «{w}» — твой толчок. Чем дальше ты оглядываешься с любовью, тем дальше можешь шагнуть вперёд без страха.", "В темноте три свечи спорили, чья очередь светить. Первая сказала: «Я горела вчера, и этого никто не отнимет». Вторая: «Я ещё не зажжена, и всё возможно». Третья, самая маленькая, горела сейчас и молчала. Ты кладёшь «{w}» к её подножию. Прошлое — тёплый воск, будущее — фитиль, но свет бывает только в настоящем. Береги его.", "Говорят, перелётные птицы помнят не маршрут, а ощущение дома. Они летят годами и всё равно находят тот самый карниз. Твоё «{w}» — такая птица. Она улетела давно, и казалось, насовсем. Но птицы возвращаются не на место, а к тому, кто ждёт без отчаяния. Перестань караулить небо. Оставь окно приоткрытым.", "Песок в часах не умирает, падая: он просто меняет сторону. Мудрец перевернул часы и сказал ученику: «Видишь? Верх и низ, прошлое и будущее — лишь вопрос того, как держать стекло». Звучит «{w}», и часы поворачиваются на ничтожную долю градуса. Этого хватает, чтобы упавший песок засветился на солнце. Ничего не вернулось. Но стало красивее.", "Звезда, которую ты видишь ночью, может давно погаснуть. Её свет идёт к тебе тысячи лет, и ты любуешься прошлым, думая, что смотришь в настоящее. Так устроена вся память. «{w}» — луч, пущенный в обратную сторону. Однажды он дойдёт до кого-то, кто тоже смотрит в небо и не знает, что видит чьё-то давнее «спасибо».", "В библиотеке без стен каждая книга — одна прожитая секунда. Библиотекарь не разрешает их открывать: «Открытая секунда прочитана, а прочитанное перестаёт быть тайной». Он принимает «{w}» вместо читательского билета и ставит на пустую полку. «Теперь у тебя есть своя книга, — говорит он. — Не читай её. Продолжай писать».", "Перед рассветом наступает минута, когда мир не принадлежит ни ночи, ни дню. Старики зовут её щелью времени: в неё можно шепнуть то, что не дошло до адресата. Ты шепчешь «{w}», и щель на мгновение расширяется. Оттуда пахнет детством, дождём, чьими-то тёплыми руками. Не пытайся удержать запах. Достаточно знать, что щель существует.", "Яблоня не жалеет о цветах, которые осыпались. Она знает: каждый лепесток был нужен, чтобы появилось яблоко. Твоя секунда не пропала, она стала тем, кто ты есть сегодня. «{w}» ложится к корням, и земля принимает дар молча. Всё, что ты отдаёшь прошлому, вернётся не секундой, а вкусом плода, в сладости которого однажды удивишься.", "Лодочник перевозит людей через реку без берегов. Платой служит самое тяжёлое слово, которое человек несёт с собой. Звучит «{w}», и лодка становится легче. «Куда мы плывём?» — спрашиваешь ты. «К секунде, которую хочешь вернуть», — отвечает лодочник. Но берег так и не появляется. Тогда понимаешь: плыть — и есть ответ. Секунда не на том берегу. Она в движении."]};
+  /* stories in other languages are assembled from three parts: a scene, a turn and a thought (4 x 4 x 4 = 64 stories) */
+  var GEN = {"en": [["A ferryman on a river without banks once accepted a single word as his fare: “{w}”. He weighed it in his palm and said nothing for a long while.", "In a town with no clocks, a child dropped “{w}” into a well, to see whether time keeps what it is given.", "At the edge of the world a miller grinds moments instead of grain. Today he was handed “{w}”, and he stopped his wheel to listen.", "An old woman who keeps forgotten seconds in glass jars held “{w}” up to the lamp, like a coin from a country that no longer exists."], ["Nothing came back at first. Then, from very far away, came something that was not a sound, but the memory of one.", "The corridor grew warmer for a heartbeat, and behind a closed door someone held their breath so as not to frighten what was returning.", "What returned was not the second itself, but the light it once cast, still travelling, like a star that has already gone out.", "The air shifted. For one moment the past and the present stood so close that you could not say which of them was remembering the other."], ["A second cannot be brought back, but it can be looked at again with deeper eyes, and that is the only return the heart has ever needed.", "Perhaps nothing is lost: everything simply moves away along a thread, and the distance between you and it is what we call time.", "The most ordinary moment is the one most worth asking for, because life is sewn from ordinary moments, and only afterwards do they turn to gold.", "So stop waiting at the door. The second you are asking for is already inside you, quietly shaping how you step into the next one."]], "es": [["Un barquero de un río sin orillas aceptó una sola palabra como pasaje: «{w}». La sopesó en la palma de la mano y guardó silencio mucho tiempo.", "En un pueblo sin relojes, un niño dejó caer «{w}» en un pozo para ver si el tiempo guarda lo que recibe.", "En el fin del mundo un molinero muele instantes en lugar de grano. Hoy le entregaron «{w}» y detuvo la rueda para escucharlo.", "Una anciana que guarda segundos olvidados en frascos de cristal alzó «{w}» hacia la lámpara, como una moneda de un país que ya no existe."], ["Al principio nada regresó. Después llegó desde muy lejos algo que no era un sonido, sino el recuerdo de uno.", "El pasillo se volvió más cálido por un latido, y tras una puerta cerrada alguien contuvo el aliento para no asustar lo que volvía.", "Lo que volvió no fue el segundo, sino la luz que dejó, todavía en camino, como la de una estrella que ya se apagó.", "El aire cambió. Por un instante el pasado y el presente estuvieron tan cerca que no se sabía cuál recordaba al otro."], ["Un segundo no puede traerse de vuelta, pero puede mirarse otra vez con ojos más hondos, y es el único regreso que el corazón necesitó jamás.", "Quizá nada se pierde: todo se aleja por un hilo, y la distancia entre tú y ello es lo que llamamos tiempo.", "El instante más corriente es el que más vale pedir, porque la vida se cose con instantes corrientes, y solo después se vuelven oro.", "Así que deja de esperar en la puerta. El segundo que pides ya está en ti, moldeando en silencio cómo das el siguiente paso."]], "fr": [["Un passeur, sur un fleuve sans rives, accepta un seul mot pour passage : « {w} ». Il le soupesa dans sa paume et se tut longtemps.", "Dans une ville sans horloges, un enfant laissa tomber « {w} » dans un puits, pour voir si le temps garde ce qu’on lui donne.", "Au bout du monde, un meunier moud des instants au lieu de grain. Aujourd’hui on lui tendit « {w} », et il arrêta sa roue pour l’écouter.", "Une vieille femme qui garde des secondes oubliées dans des bocaux de verre leva « {w} » vers la lampe, comme une pièce d’un pays disparu."], ["Rien ne revint d’abord. Puis, de très loin, vint quelque chose qui n’était pas un son, mais le souvenir d’un son.", "Le couloir se réchauffa le temps d’un battement, et derrière une porte close quelqu’un retint son souffle pour ne pas effrayer ce qui revenait.", "Ce qui revint n’était pas la seconde, mais la lumière qu’elle avait laissée, encore en route, comme celle d’une étoile éteinte.", "L’air changea. Un instant, le passé et le présent furent si proches qu’on ne savait plus lequel se souvenait de l’autre."], ["Une seconde ne se rapporte pas, mais on peut la regarder à nouveau d’un œil plus profond, et c’est le seul retour dont le cœur ait jamais eu besoin.", "Peut-être rien ne se perd : tout s’éloigne le long d’un fil, et la distance entre vous et cela, nous l’appelons le temps.", "L’instant le plus ordinaire est celui qui mérite le plus d’être demandé, car la vie est cousue d’instants ordinaires, qui ne deviennent or qu’après coup.", "Cesse donc d’attendre à la porte. La seconde que tu réclames est déjà en toi, façonnant en silence ton prochain pas."]], "de": [["Ein Fährmann auf einem Fluss ohne Ufer nahm ein einziges Wort als Fahrgeld an: „{w}“. Er wog es in der Hand und schwieg lange.", "In einer Stadt ohne Uhren ließ ein Kind „{w}“ in einen Brunnen fallen, um zu sehen, ob die Zeit behält, was man ihr gibt.", "Am Rand der Welt mahlt ein Müller Augenblicke statt Korn. Heute reichte man ihm „{w}“, und er hielt sein Rad an, um zu lauschen.", "Eine alte Frau, die vergessene Sekunden in Gläsern sammelt, hielt „{w}“ gegen die Lampe, wie eine Münze aus einem Land, das es nicht mehr gibt."], ["Zuerst kam nichts zurück. Dann kam aus weiter Ferne etwas, das kein Klang war, sondern die Erinnerung an einen.", "Der Gang wurde für einen Herzschlag wärmer, und hinter einer verschlossenen Tür hielt jemand den Atem an, um nicht zu verscheuchen, was zurückkehrte.", "Zurück kam nicht die Sekunde selbst, sondern ihr Licht, noch unterwegs, wie das eines längst erloschenen Sterns.", "Die Luft veränderte sich. Für einen Moment standen Vergangenheit und Gegenwart so nah, dass man nicht sagen konnte, wer sich an wen erinnerte."], ["Eine Sekunde lässt sich nicht zurückholen, aber mit tieferen Augen noch einmal ansehen, und nur diese Heimkehr hat das Herz je gebraucht.", "Vielleicht geht nichts verloren: alles entfernt sich nur an einem Faden, und den Abstand zwischen dir und ihm nennen wir Zeit.", "Der gewöhnlichste Augenblick ist der erbetenswerteste, denn das Leben ist aus gewöhnlichen Augenblicken genäht, die erst später zu Gold werden.", "Darum hör auf, an der Tür zu warten. Die Sekunde, um die du bittest, ist schon in dir und formt still deinen nächsten Schritt."]], "pt": [["Um barqueiro de um rio sem margens aceitou uma única palavra como passagem: «{w}». Pesou-a na palma da mão e calou-se por muito tempo.", "Numa cidade sem relógios, uma criança deixou cair «{w}» num poço, para ver se o tempo guarda o que recebe.", "No fim do mundo, um moleiro mói instantes em vez de grão. Hoje entregaram-lhe «{w}», e ele parou a roda para ouvir.", "Uma velha que guarda segundos esquecidos em frascos de vidro ergueu «{w}» contra a lâmpada, como uma moeda de um país que já não existe."], ["A princípio nada voltou. Depois veio de muito longe algo que não era um som, mas a lembrança de um.", "O corredor aqueceu por um batimento, e atrás de uma porta fechada alguém prendeu a respiração para não assustar o que regressava.", "O que voltou não foi o segundo, mas a luz que ele deixou, ainda a caminho, como a de uma estrela já apagada.", "O ar mudou. Por um instante, passado e presente ficaram tão próximos que não se sabia qual lembrava o outro."], ["Um segundo não se traz de volta, mas pode ser olhado de novo com olhos mais fundos, e esse é o único regresso de que o coração precisou.", "Talvez nada se perca: tudo apenas se afasta por um fio, e a distância entre você e isso é o que chamamos de tempo.", "O instante mais comum é o que mais vale pedir, porque a vida é costurada de instantes comuns, que só depois viram ouro.", "Então pare de esperar à porta. O segundo que você pede já está em você, moldando em silêncio o seu próximo passo."]], "it": [["Un traghettatore su un fiume senza sponde accettò una sola parola come pedaggio: «{w}». La soppesò sul palmo e tacque a lungo.", "In una città senza orologi, un bambino lasciò cadere «{w}» in un pozzo, per vedere se il tempo conserva ciò che riceve.", "Ai confini del mondo un mugnaio macina istanti invece di grano. Oggi gli hanno porto «{w}», e ha fermato la ruota per ascoltare.", "Una vecchia che conserva secondi dimenticati in barattoli di vetro alzò «{w}» verso la lampada, come una moneta di un paese scomparso."], ["All’inizio non tornò nulla. Poi, da molto lontano, giunse qualcosa che non era un suono, ma il ricordo di un suono.", "Il corridoio si fece più caldo per un battito, e dietro una porta chiusa qualcuno trattenne il respiro per non spaventare ciò che tornava.", "Ciò che tornò non era il secondo, ma la luce che aveva lasciato, ancora in viaggio, come quella di una stella già spenta.", "L’aria cambiò. Per un istante passato e presente furono così vicini che non si capiva chi ricordasse l’altro."], ["Un secondo non si riporta indietro, ma si può guardare di nuovo con occhi più profondi, ed è l’unico ritorno di cui il cuore abbia mai avuto bisogno.", "Forse nulla si perde: tutto si allontana lungo un filo, e la distanza tra te e quel momento è ciò che chiamiamo tempo.", "L’istante più comune è quello che vale di più chiedere, perché la vita è cucita di istanti comuni, che diventano oro solo dopo.", "Smetti dunque di aspettare alla porta. Il secondo che chiedi è già in te e plasma in silenzio il tuo prossimo passo."]], "uk": [["Перевізник на ріці без берегів прийняв за плату єдине слово: «{w}». Він зважив його на долоні й довго мовчав.", "У місті без годинників дитина кинула «{w}» у криницю, щоб побачити, чи зберігає час те, що отримує.", "На краю світу мірошник меле не зерно, а миті. Сьогодні йому подали «{w}», і він зупинив колесо, щоб послухати.", "Стара жінка, що збирає забуті секунди в скляні банки, підняла «{w}» до лампи, мов монету з країни, якої вже немає."], ["Спершу нічого не повернулося. Потім здалеку долинуло щось, що не було звуком, а лише спогадом про нього.", "Коридор потеплішав на один удар серця, і за зачиненими дверима хтось затамував подих, щоб не злякати те, що поверталося.", "Повернулася не сама секунда, а світло, яке вона залишила, ще в дорозі, мов світло вже згаслої зірки.", "Повітря змінилося. На мить минуле й теперішнє стали так близько, що годі було сказати, хто кого згадує."], ["Секунду не повернути, але на неї можна глянути знову глибшими очима, і саме такого повернення серцю завжди й було потрібно.", "Можливо, нічого не втрачено: усе лише віддаляється по нитці, а відстань між тобою і ним ми називаємо часом.", "Найзвичайнішу мить варто просити найдужче, бо життя зшите зі звичайних миттєвостей, які золотіють лише згодом.", "Тож не чекай більше біля дверей. Секунда, про яку ти просиш, уже в тобі й тихо формує твій наступний крок."]], "zh": [["河上的摆渡人收下了一个词作船资：“{w}”。他把它放在掌心掂了掂，沉默了很久。", "在一座没有钟的城里，孩子把“{w}”扔进井里，想看看时间会不会留住它收到的东西。", "世界尽头的磨坊主磨的不是谷物，而是瞬间。今天有人递给他“{w}”，他停下磨轮，静静倾听。"], ["起初什么也没有回来。后来，从很远的地方传来的不是声音，而是对声音的记忆。", "走廊暖了一下，像一次心跳那么久。一扇紧闭的门后，有人屏住呼吸，生怕惊走回来的东西。", "回来的不是那一秒本身，而是它留下的光，仍在路上，像一颗早已熄灭的星。"], ["一秒无法被带回，却可以用更深的眼睛再看一次，而这正是心真正需要的归来。", "也许什么都没有丢失，一切只是沿着一根线远去，你与它之间的距离，我们称之为时间。", "别再在门口等了。你所求的那一秒早已在你心里，悄悄塑造着你迈出的下一步。"]], "ja": [["岸のない川の渡し守は、渡し賃にたった一つの言葉を受け取った。「{w}」。彼は掌でそれを量り、長いあいだ黙っていた。", "時計のない町で、ひとりの子どもが「{w}」を井戸へ落とした。時間は受け取ったものを覚えているのか、確かめたかったのだ。", "世界の果ての粉挽きは、穀物ではなく瞬間を挽く。今日「{w}」を差し出され、彼は水車を止めて耳を澄ました。"], ["初めは何も戻ってこなかった。やがてはるか遠くから届いたのは、音ではなく、音の記憶だった。", "廊下が一拍ぶんだけ温かくなった。閉じた扉の向こうで、戻ってくるものを怖がらせまいと、誰かが息をひそめた。", "戻ってきたのは一秒そのものではなく、その一秒が残した光だった。とうに消えた星のように、まだ旅の途中にある。"], ["一秒は連れ戻せない。けれど、より深い目で見つめ直すことはできる。心が本当に求めていた帰還は、それだけだ。", "何も失われてはいないのかもしれない。すべては糸に沿って遠ざかるだけで、あなたとそのあいだの距離を、私たちは時間と呼ぶ。", "もう扉の前で待たなくていい。あなたが求める一秒は、すでにあなたの中にあり、次の一歩をひそかに形づくっている。"]], "ko": [["기슭 없는 강의 뱃사공은 뱃삯으로 단 한 단어를 받았다. “{w}”. 그는 손바닥에 올려 무게를 가늠하며 오래 말이 없었다.", "시계 없는 마을에서 한 아이가 “{w}”를 우물에 떨어뜨렸다. 시간이 받은 것을 간직하는지 보고 싶어서였다.", "세상 끝의 방앗간 주인은 곡식이 아니라 순간을 간다. 오늘 “{w}”를 건네받자 그는 물레방아를 멈추고 귀를 기울였다."], ["처음엔 아무것도 돌아오지 않았다. 이윽고 아주 먼 곳에서 소리가 아니라 소리의 기억이 건너왔다.", "복도가 심장이 한 번 뛰는 동안 따뜻해졌고, 닫힌 문 뒤에서 누군가 돌아오는 것을 놀라게 할까 숨을 죽였다.", "돌아온 것은 그 1초가 아니라 그것이 남긴 빛이었다. 이미 꺼진 별처럼 아직도 여행 중이었다."], ["1초는 되돌릴 수 없지만 더 깊은 눈으로 다시 바라볼 수는 있다. 마음이 정말 필요로 했던 귀환은 그것뿐이다.", "어쩌면 아무것도 잃지 않았는지 모른다. 모든 것은 실을 따라 멀어질 뿐이고, 당신과 그 사이의 거리를 우리는 시간이라 부른다.", "이제 문 앞에서 기다리지 마라. 당신이 구하는 1초는 이미 당신 안에서 다음 걸음을 조용히 빚고 있다."]], "ar": [["قبِل عبّارٌ على نهرٍ بلا ضفاف كلمةً واحدةً أجرةً للعبور: «{w}». وزنها في كفّه وصمت طويلًا.", "في مدينةٍ بلا ساعات، أسقط طفلٌ «{w}» في بئر ليرى هل يحفظ الزمن ما يُعطاه.", "عند طرف العالم يطحن طحّانٌ اللحظات بدل الحبوب. سُلِّم اليوم «{w}»، فأوقف الرحى وأصغى."], ["في البدء لم يعد شيء. ثم جاء من بعيد جدًّا ما ليس صوتًا، بل ذاكرةَ صوت.", "دفئ الممرّ لمدة نبضة، وخلف بابٍ مغلق حبس أحدهم أنفاسه كي لا يُفزع ما كان عائدًا.", "ما عاد لم يكن الثانية نفسها بل الضوء الذي تركته، لا يزال في الطريق كنجمٍ انطفأ منذ زمن."], ["لا تُستعاد الثانية، لكن يمكن النظر إليها ثانيةً بعينين أعمق، وهذه العودة الوحيدة التي احتاجها القلب.", "ربما لا شيء يضيع، كل شيء يبتعد على خيط، والمسافة بينك وبينه هي ما نسميه الزمن.", "كفّ عن الانتظار عند الباب. الثانية التي تطلبها صارت فيك، تشكّل بصمتٍ خطوتك التالية."]], "hi": [["बिना किनारों की नदी के माँझी ने किराए में एक ही शब्द लिया: «{w}»। उसने उसे हथेली पर तोला और देर तक चुप रहा।", "घड़ियों के बिना शहर में एक बच्चे ने «{w}» को कुएँ में गिरा दिया, यह देखने कि समय जो पाता है उसे सँजोता है या नहीं।", "दुनिया के छोर पर एक चक्कीवाला अनाज नहीं, पल पीसता है। आज उसे «{w}» मिला, तो उसने चक्की रोककर कान लगा दिए।"], ["शुरू में कुछ नहीं लौटा। फिर बहुत दूर से जो आया वह आवाज़ नहीं, आवाज़ की याद थी।", "गलियारा एक धड़कन भर गर्म हुआ, और बंद दरवाज़े के पीछे किसी ने साँस रोक ली कि लौटती चीज़ डर न जाए।", "जो लौटा वह वह पल नहीं, उसकी छोड़ी रोशनी थी, अब भी राह में, बुझ चुके तारे की तरह।"], ["बीता पल वापस नहीं आता, पर उसे गहरी आँखों से फिर देखा जा सकता है; दिल को बस इसी वापसी की ज़रूरत थी।", "शायद कुछ नहीं खोता; सब कुछ एक धागे पर दूर चला जाता है, और तुम्हारे व उसके बीच की दूरी को हम समय कहते हैं।", "अब दरवाज़े पर इंतज़ार छोड़ दो। जो पल तुम माँगते हो वह तुम्हारे भीतर है, चुपचाप तुम्हारा अगला क़दम गढ़ता हुआ।"]], "tr": [["Kıyısız bir nehrin kayıkçısı yolluk olarak tek bir sözcük aldı: «{w}». Avucunda tarttı ve uzun süre sustu.", "Saatsiz bir kentte bir çocuk «{w}» sözünü kuyuya bıraktı; zaman aldığını saklıyor mu diye merak etmişti.", "Dünyanın ucunda bir değirmenci tahıl değil, an öğütür. Bugün eline «{w}» verildi; çarkını durdurup dinledi."], ["Önce hiçbir şey dönmedi. Sonra çok uzaklardan bir ses değil, bir sesin anısı geldi.", "Koridor bir kalp atışı kadar ısındı; kapalı bir kapının ardında biri, geri dönen şeyi ürkütmemek için nefesini tuttu.", "Dönen saniyenin kendisi değil, bıraktığı ışıktı; çoktan sönmüş bir yıldız gibi hâlâ yoldaydı."], ["Bir saniye geri getirilemez, ama daha derin gözlerle yeniden bakılabilir; kalbin hiç ihtiyaç duyduğu tek dönüş budur.", "Belki hiçbir şey kaybolmaz; her şey bir iplik boyunca uzaklaşır ve seninle onun arasındaki mesafeye zaman deriz.", "Artık kapıda bekleme. İstediğin saniye zaten içinde, bir sonraki adımını sessizce biçimlendiriyor."]], "pl": [["Przewoźnik na rzece bez brzegów przyjął za opłatę jedno słowo: «{w}». Zważył je na dłoni i długo milczał.", "W mieście bez zegarów dziecko wrzuciło «{w}» do studni, by sprawdzić, czy czas zachowuje to, co dostaje.", "Na krańcu świata młynarz miele nie ziarno, lecz chwile. Dziś podano mu «{w}», więc zatrzymał koło, by posłuchać."], ["Najpierw nic nie wróciło. Potem z bardzo daleka przyszło coś, co nie było dźwiękiem, lecz wspomnieniem dźwięku.", "Korytarz ociepłił się na jedno uderzenie serca, a za zamkniętymi drzwiami ktoś wstrzymał oddech, by nie spłoszyć tego, co wracało.", "Wróciła nie sama sekunda, lecz światło, które zostawiła, wciąż w drodze, jak światło dawno zgasłej gwiazdy."], ["Sekundy nie da się przywrócić, ale można spojrzeć na nią głębszym wzrokiem, i tylko takiego powrotu serce kiedykolwiek potrzebowało.", "Może nic nie ginie: wszystko oddala się po nitce, a odległość między tobą a tym nazywamy czasem.", "Przestań więc czekać pod drzwiami. Sekunda, o którą prosisz, jest już w tobie i cicho kształtuje twój następny krok."]], "vi": [["Người lái đò trên con sông không bờ nhận một từ làm tiền đò: «{w}». Ông cân nó trong lòng bàn tay và im lặng rất lâu.", "Trong thành phố không có đồng hồ, một đứa trẻ thả «{w}» xuống giếng để xem thời gian có giữ lại thứ nó nhận không.", "Nơi tận cùng thế giới, người xay bột không xay lúa mà xay khoảnh khắc. Hôm nay ông được trao «{w}», liền dừng cối để lắng nghe."], ["Lúc đầu chẳng có gì trở lại. Rồi từ rất xa vọng đến thứ không phải âm thanh, mà là ký ức về một âm thanh.", "Hành lang ấm lên trong một nhịp tim, và sau cánh cửa khép kín có ai đó nín thở để khỏi làm hoảng điều đang quay về.", "Thứ trở lại không phải giây ấy, mà là ánh sáng nó để lại, vẫn đang trên đường, như một vì sao đã tắt từ lâu."], ["Một giây không thể mang về, nhưng có thể nhìn lại bằng đôi mắt sâu hơn, và đó là cuộc trở về duy nhất trái tim từng cần.", "Có lẽ không gì mất đi: mọi thứ chỉ rời xa theo một sợi chỉ, và khoảng cách giữa bạn với nó, ta gọi là thời gian.", "Đừng đợi ở cửa nữa. Giây bạn xin đã ở trong bạn, lặng lẽ nặn nên bước chân kế tiếp."]]};
+  function build(l) {
+    var d = GEN[l]; if (!d) return null;
+    var out = [];
+    for (var a = 0; a < d[0].length; a++) for (var b = 0; b < d[1].length; b++) for (var c = 0; c < d[2].length; c++) out.push(d[0][a] + ' ' + d[1][b] + ' ' + d[2][c]);
+    return out;
+  }
+  var pool = STORIES[lang] || build(lang) || g.slice(4).concat(EXTRA[lang] || []);
+  var seenKey = 'bl_seen2_' + lang, seen = [];
+  try { seen = JSON.parse(localStorage.getItem(seenKey) || '[]').filter(function (i) { return i < pool.length; }); } catch (e) { seen = []; }
+  function pick() {
+    if (seen.length >= pool.length) seen = [];
+    var free = [];
+    for (var i = 0; i < pool.length; i++) if (seen.indexOf(i) < 0) free.push(i);
+    var n = free[Math.floor(Math.random() * free.length)];
+    seen.push(n);
+    try { localStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+    return n;
+  }
+
+  function reveal(p, str) {
+    clearTimeout(timer);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { p.textContent = str; return; }
+    var chars;
+    try { chars = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(str), function (x) { return x.segment; }); }
+    catch (e) { chars = Array.from(str); }
+    p.textContent = '';
+    var spans = chars.map(function (c) { var el = document.createElement('span'); el.className = 'ch'; el.textContent = c; p.appendChild(el); return el; });
+    var i = 0;
+    (function step() {
+      if (i >= spans.length) return;
+      spans[i].className = 'ch on';
+      var c = chars[i]; i++;
+      var k = chars.length > 160 ? 0.3 : 1;
+      timer = setTimeout(step, (40 + Math.random() * 50 + (/[.,;:!?。、，]/.test(c) ? 220 : 0)) * k);
+    })();
+  }
+  function hash(str) { var h = 5381; for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return Math.abs(h); }
+
+  function open() {
+    lastFocus = document.activeElement;
+    clearTimeout(timer);
+    form.hidden = false; ans.hidden = true; input.value = ''; text.textContent = ''; word.textContent = '';
+    ritual.hidden = false;
+    input.focus();
+  }
+  function close() {
+    clearTimeout(timer);
+    ritual.hidden = true;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  $('gameBtn').addEventListener('click', open);
+  $('rclose').addEventListener('click', close);
+  ritual.addEventListener('click', function (e) { if (e.target === ritual) close(); });
+  function give(e) {
+    if (e) e.preventDefault();
+    if (form.hidden) return;
+    var w = input.value.trim();
+    if (!w) { input.focus(); return; }
+    var msg;
+    try { msg = pool[pick()]; } catch (err) { msg = pool[Math.floor(Math.random() * pool.length)]; }
+    msg = String(msg).split('{w}').join(w);
+    form.hidden = true; ans.hidden = false;
+    word.textContent = '\u201C' + w + '\u201D';
+    try { reveal(text, msg); } catch (err) { text.textContent = msg; }
+    try { $('rclose').focus(); } catch (err) {}
+  }
+  form.addEventListener('submit', give);
+  $('rgo').addEventListener('click', give);
+  document.addEventListener('keydown', function (e) {
+    if (ritual.hidden) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'Tab') {
+      var f = Array.prototype.filter.call(ritual.querySelectorAll('button, input'), function (el) { return el.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+})();
+
+/* ---------- Endless black corridor with a flashlight (WebGL) ---------- */
+(function () {
+  var cv = document.getElementById('bg');
+  var gl = null;
+  try { gl = cv.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' }); } catch (e) {}
+  if (!gl) return;
+
+  var FRAG = [
+    '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+    'precision highp float;',
+    '#else',
+    'precision mediump float;',
+    '#endif',
+    'uniform vec2 R; uniform float T;',
+    'float hash(float n){ return fract(sin(n*127.1)*43758.5453); }',
+    'float hash2(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }',
+    'float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);',
+    '  return mix(mix(hash2(i),hash2(i+vec2(1.0,0.0)),f.x), mix(hash2(i+vec2(0.0,1.0)),hash2(i+vec2(1.0,1.0)),f.x), f.y); }',
+    /* corridor centre line: it bends left and right forever */
+    'float cx(float z){ return 2.2*sin(z*0.09) + 1.1*sin(z*0.037+1.3); }',
+    /* side passages and doorways cut into the walls */
+    'float recess(float z, float side){',
+    '  float id=floor(z/7.0); float h=hash(id*2.0+side*13.0); float lz=fract(z/7.0);',
+    '  return step(0.72,h)*smoothstep(0.30,0.34,lz)*(1.0-smoothstep(0.58,0.62,lz))*2.4; }',
+    'float map(vec3 p){',
+    '  float x=p.x-cx(p.z);',
+    '  float wl=1.5+recess(p.z,0.0); float wr=1.5+recess(p.z,1.0);',
+    '  float dx=min(x+wl, wr-x);',
+    '  float dy=min(1.35-p.y, p.y+1.0);',
+    '  return min(dx,dy); }',
+    'vec3 normalAt(vec3 p){ vec2 e=vec2(0.02,-0.02);',
+    '  return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx)); }',
+    'float albedo(vec3 p, vec3 n, out float gloss){',
+    '  gloss=0.0; float a;',
+    '  if(abs(n.y)>0.5){',
+    '    vec2 uv=p.xz; a=0.26+0.14*noise(uv*2.0)+0.07*noise(uv*18.0);',
+    '    vec2 g=abs(fract(uv/0.6)-0.5); float grid=1.0-smoothstep(0.0,0.02,0.5-max(g.x,g.y));',
+    '    a*=1.0-0.65*grid;',
+    '    if(n.y>0.0){ gloss=smoothstep(0.45,0.75,noise(uv*0.7+3.0)); }',
+    '  } else {',
+    '    vec2 uv=vec2(p.z,p.y); a=0.30+0.16*noise(uv*vec2(1.5,3.0))+0.07*noise(uv*22.0);',
+    '    float f=fract(p.z/2.4); float d=min(f,1.0-f)*2.4;',
+    '    a*=1.0-0.7*(1.0-smoothstep(0.0,0.035,d));',
+    '    if(p.y<-0.2) a*=0.55;',
+    '    a*=1.0-0.6*(1.0-smoothstep(0.0,0.03,abs(p.y+0.2)));',
+    '    float side=step(0.0,p.x-cx(p.z)); float id=floor(p.z/7.0);',
+    '    float hd=hash(id*3.0+side*7.0+50.0);',
+    '    if(hd>0.45 && recess(p.z,side)<0.01){',
+    '      float zc=(id+0.5)*7.0; float dz=abs(p.z-zc);',
+    '      float inD=step(dz,0.45)*step(p.y,0.85); float fr=step(dz,0.54)*step(p.y,0.95)*(1.0-inD);',
+    '      a*=1.0-0.45*inD; a*=1.0+0.7*fr; }',
+    '  }',
+    '  return a; }',
+    'void main(){',
+    '  vec2 uv=(gl_FragCoord.xy-0.5*R)/R.y;',
+    '  float z0=T*1.1;',
+    '  vec3 ro=vec3(cx(z0)+0.28*sin(T*0.4), 0.03*sin(T*4.2)+0.015*sin(T*8.1), z0);',
+    '  vec3 fwd=normalize(vec3(cx(z0+4.0)-ro.x+0.25*sin(T*0.33), 0.03*sin(T*0.5), 4.0));',
+    '  vec3 right=normalize(cross(vec3(0.0,1.0,0.0),fwd)); vec3 up=cross(fwd,right);',
+    '  vec3 rd=normalize(fwd+(right*uv.x+up*uv.y)*1.1);',
+    /* flashlight held low and to the right, sweeping slowly */
+    '  vec3 lp=ro+right*0.18-up*0.14;',
+    '  vec3 bd=normalize(fwd+right*(0.26*sin(T*0.31)+0.07*sin(T*1.3))+up*(0.05*sin(T*0.47)-0.03));',
+    '  float fl=0.94+0.06*noise(vec2(T*9.0,1.0)); fl*=1.0-0.65*step(0.985,noise(vec2(T*3.0,7.0)));',
+    '  float t=0.0; float hit=0.0;',
+    '  for(int i=0;i<64;i++){ vec3 p=ro+rd*t; float d=map(p); if(d<0.004){hit=1.0;break;} t+=d*0.8; if(t>40.0)break; }',
+    '  vec3 col=vec3(0.0);',
+    '  if(hit>0.5){',
+    '    vec3 p=ro+rd*t; vec3 n=normalAt(p); float gloss; float al=albedo(p,n,gloss);',
+    '    vec3 l=lp-p; float dist=length(l); vec3 ld=l/dist;',
+    '    float cosA=dot(-ld,bd);',
+    '    float spot=smoothstep(0.84,0.975,cosA); spot=spot*spot*(0.6+0.8*pow(max(cosA,0.0),30.0));',
+    '    float diff=max(dot(n,ld),0.0);',
+    '    float att=exp(-dist*0.09)/(1.0+0.05*dist*dist);',
+    '    float spec=gloss*pow(max(dot(reflect(-ld,n),-rd),0.0),24.0)*1.4;',
+    '    vec3 lc=vec3(1.0,0.95,0.80);',
+    '    col=lc*(al*diff+spec)*spot*att*3.6*fl + vec3(0.004)*al;',
+    '  }',
+    /* faint haze in the beam */
+    '  float beam=pow(max(dot(rd,bd),0.0),70.0); col+=vec3(1.0,0.95,0.8)*beam*0.035*fl;',
+    '  col=1.0-exp(-col*1.5);',
+    '  float vig=1.0-0.5*dot(uv,uv)*1.4; col*=clamp(vig,0.0,1.0);',
+    '  col+=(hash2(gl_FragCoord.xy+fract(T)*61.0)-0.5)*0.03*(0.3+col);',
+    '  gl_FragColor=vec4(max(col,0.0),1.0);',
+    '}'
+  ].join('\n');
+
+  function compile(type, src) {
+    var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  var vs = compile(gl.VERTEX_SHADER, 'attribute vec2 a; void main(){ gl_Position=vec4(a,0.0,1.0); }');
+  var fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) return;
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(prog)); return; }
+  gl.useProgram(prog);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var uR = gl.getUniformLocation(prog, 'R'), uT = gl.getUniformLocation(prog, 'T');
+
+  // Render at a reduced resolution and let the browser scale it up. The budget drops by itself on slow screens (TVs).
+  var budget = 560000, w = 0, h = 0;
+  function resize() {
+    var cw = Math.max(cv.clientWidth, 1), ch = Math.max(cv.clientHeight, 1);
+    var k = Math.min(1, Math.sqrt(budget / (cw * ch)));
+    var nw = Math.max(2, Math.floor(cw * k)), nh = Math.max(2, Math.floor(ch * k));
+    if (nw !== w || nh !== h) { w = nw; h = nh; cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
+  }
+  function draw(T) {
+    gl.uniform2f(uR, w, h); gl.uniform1f(uT, T);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  resize();
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { draw(14); window.addEventListener('resize', function () { resize(); draw(14); }); return; }
+  window.addEventListener('resize', resize);
+
+  var start = null, prev = 0, slow = 0, frames = 0;
+  function frame(ts) {
+    if (start === null) start = ts;
+    var dt = ts - prev; prev = ts;
+    if (frames++ > 10) {
+      if (dt > 38) slow++; else if (slow > 0) slow--;
+      if (slow > 20 && budget > 130000) { budget *= 0.75; slow = 0; resize(); }
+    }
+    draw(8 + (ts - start) / 1000);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+/* ---------- Visit counter: shared by all visitors, counted once per browser session. Tries two free services. ---------- */
+(function () {
+  var V = {"en": "Visits", "ru": "Посетителей", "uk": "Відвідувачів", "bg": "Посетители", "es": "Visitas", "pt": "Visitas", "fr": "Visites", "de": "Besuche", "it": "Visite", "nl": "Bezoeken", "pl": "Odwiedzin", "cs": "Návštěv", "sk": "Návštev", "hr": "Posjeta", "ro": "Vizite", "hu": "Látogatás", "el": "Επισκέψεις", "tr": "Ziyaret", "sv": "Besök", "no": "Besøk", "da": "Besøg", "fi": "Käyntejä", "ar": "زيارات", "he": "ביקורים", "fa": "بازدید", "ur": "وزٹ", "hi": "विज़िट", "bn": "ভিজিট", "id": "Kunjungan", "ms": "Lawatan", "vi": "Lượt truy cập", "th": "ผู้เข้าชม", "zh": "访问量", "zh-Hant": "造訪次數", "ja": "訪問数", "ko": "방문자", "kk": "Келушілер", "uz": "Tashriflar", "az": "Ziyarət", "sw": "Ziara", "fil": "Mga bisita"};
+  var lang = document.documentElement.lang || 'en';
+  var el = document.getElementById('visits');
+  if (!el) return;
+  var name = V[lang] || V.en;
+  el.textContent = name + ': …';
+  function get(url, pick) {
+    return fetch(url).then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (d) { var n = pick(d); if (typeof n !== 'number') throw new Error('shape'); return n; });
+  }
+  var counted = false;
+  try { counted = sessionStorage.getItem('bl_counted') === '1'; } catch (e) {}
+  var A = 'https://api.counterapi.dev/v1/blackliminal-site/visits' + (counted ? '' : '/up');
+  var B = 'https://abacus.jasoncameron.dev/' + (counted ? 'get' : 'hit') + '/blackliminal-site/visits';
+  if (!window.fetch) { el.textContent = name + ': —'; return; }
+  get(A, function (d) { return d.count; })
+    .catch(function () { return get(B, function (d) { return d.value; }); })
+    .then(function (n) {
+      var t; try { t = n.toLocaleString(lang); } catch (e) { t = String(n); }
+      el.textContent = name + ': ' + t;
+      try { sessionStorage.setItem('bl_counted', '1'); } catch (e) {}
+    })
+    .catch(function () { el.textContent = name + ': —'; });
+})();
+</script>
+</body>
+</html>
